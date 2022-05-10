@@ -10,6 +10,8 @@ import 'dayjs/locale/ko';
 import CreateLocInput from './CreateLocInput';
 import CreateDate from './CreateDate';
 import CreateTime from './CreateTime';
+import { checkText, checkDate, checkTime } from './ValidCheck'
+import axios from 'axios';
 
 
 const dayjs = require("dayjs");
@@ -61,7 +63,7 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ open, setOpen }) {
+function CreateRoom({ open, setOpen, addRoom }) {
     const [start, setStart] = useState("");
     const [startLoc, setStartLoc] = useState(null);
     const [end, setEnd] = useState("");
@@ -69,15 +71,43 @@ function CreateRoom({ open, setOpen }) {
     const [startDay, setStartDay] = useState(dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
 
+    const requestCreateRoom = () => {
+        axios.post('http://211.229.250.42:25030/api/create_room', {
+            SrcText: start,
+            DestText: end,
+            SrcLatitude: startLoc.latitude,
+            SrcLongitude: startLoc.longitude,
+            DestLatitude: endLoc.latitude,
+            DestLongitude: endLoc.longitude,
+            date: startDay.format('YYYY-MM-DD'),
+            time: startTime.format('HH:mm:ss')
+        }).then((res) => {
+            const rawData = res.data;
+            const id = rawData._id;
+            localStorage.setItem("random", rawData._random);
+            addRoom({
+                id: parseInt(id),
+                start: start,
+                startLoc: startLoc,
+                end: end,
+                endLoc: endLoc,
+                date: startDay,
+                time: startTime
+            })
+        })
+    }
+
     const isValidInput = () => {
-        return true;
+        if (checkText(start) && startLoc !== null && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
+            return true;
+        }
     }
 
     const submitHandler = (e) => {
         e.preventDefault();
-
         if (isValidInput()) {
-
+            requestCreateRoom();
+            setOpen(false);
         }
     }
 
@@ -90,19 +120,19 @@ function CreateRoom({ open, setOpen }) {
         >
             <div css={createRoomDivStyle}>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc}/>
+                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} />
                 </Box>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc}/>
+                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} />
                 </Box>
                 <br />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <Box css={inputComponentStyle}>
-                        <CreateDate day={startDay} setDay={setStartDay} textStyle={textFieldStyle}/>
+                        <CreateDate day={startDay} setDay={setStartDay} textStyle={textFieldStyle} />
                     </Box>
                     <br />
                     <Box css={inputComponentStyle}>
-                        <CreateTime day={startDay} time={startTime} setTime={setStartTime} textStyle={textFieldStyle}/>
+                        <CreateTime day={startDay} time={startTime} setTime={setStartTime} textStyle={textFieldStyle} />
                     </Box>
                 </LocalizationProvider>
                 <br />

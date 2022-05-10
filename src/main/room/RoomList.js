@@ -7,6 +7,7 @@ import CreateRoom from './createRoom/CreateRoom';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import axios from 'axios';
+import birdImg from '../../img/bird.png'
 
 const roomListStyle = css`
     flex-grow: 1;
@@ -41,9 +42,35 @@ const createRoomButtonStyle = {
     backgroundColor: "white"
 };
 
+const noRoomStyle = css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    flex-grow: 1;
+
+    height: calc(100vh - 90px);
+
+    font-size: 4em;
+`;
+
 function RoomList() {
     const [open, setOpen] = useState(false);
     const [roomList, setRoomList] = useState([]);
+
+    const addRoom = (room) => {
+        setRoomList((prev) => [...prev, room])
+    }
+
+    const reload = () => {
+        axios.get('http://211.229.250.42:25030/api/room_list')
+            .then((res) => {
+                const data = res.data;
+                setRoomList(data.map((d) => {
+                    return { id: d.key, start: d.SrcText, end: d.DestText, startLoc: { latitude: d.SrcLatitude, longitude: d.SrcLongitude }, endLoc: { latitude: d.DestLatitude, longitude: d.DestLongitude }, date: dayjs(d.date), time: dayjs('2020-01-01 ' + d.time) };
+                }))
+            })
+    }
 
     const clickHandler = (e) => {
         e.preventDefault();
@@ -51,32 +78,29 @@ function RoomList() {
     }
 
     useEffect(() => {
-        axios.get('http://211.229.250.42:25030/api/room_list')
-            .then((res) => {
-                const data = res.data;
-                setRoomList(data.map((d) => {
-                   return {id: d.key, start: d.SrcText, end: d.DestText, startLoc: {latitude: d.SrcLatitude, longitude: d.SrcLongitude}, endLoc: {latitude: d.DestLatitude, longitude: d.DestLongitude}, time: dayjs(dayjs(d.date).format('YYYY-MM-DD ') + dayjs('2020-01-01 '+d.time).format('HH:mm:ss'))};;
-                }))
-            })
+        reload();
     }, [])
 
     return (
         <>
-            <List
-                css={roomListStyle}
-            >
-                {roomList.map((data) => {
-                    return (
-                        <ListItem key={data.id} css={listItemStyle}>
-                            <Room roomData={data} />
-                        </ListItem>
-                    )
-                })}
-            </List>
+            {roomList.length === 0
+                ? <div css={noRoomStyle}><img src={birdImg} alt='noRoom' css={css`position:relative;bottom:30px;width:128px;height:auto`}/><pre> . . .</pre></div>
+                : <List
+                    css={roomListStyle}
+                >
+                    {roomList.map((data) => {
+                        return (
+                            <ListItem key={data.id} css={listItemStyle}>
+                                <Room roomData={data} />
+                            </ListItem>
+                        )
+                    })}
+                </List>
+            }
             <Fab style={createRoomButtonStyle} onClick={clickHandler}>
                 <AddIcon />
             </Fab>
-            <CreateRoom open={open} setOpen={setOpen} />
+            <CreateRoom open={open} setOpen={setOpen} addRoom={addRoom} />
         </>
     )
 }
