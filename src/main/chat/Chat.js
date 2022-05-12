@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { Button, TextField } from '@mui/material';
-import { useState } from 'react';
+import ChatView from './ChatView';
 
 const chatStyle = css`
   height: calc(100% - 8px);
@@ -9,11 +9,6 @@ const chatStyle = css`
 
   display: flex;
   flex-direction: column;
-`;
-
-const viewStyle = css`
-  flex-grow: 1;
-  border: 1px solid black;
 `;
 
 const textFieldStyle = {
@@ -46,17 +41,13 @@ const sendButtonStyle = {
 };
 
 function Chat() {
-  const [chatList, setChatList] = useState([]);
-
   const chatHandler = (e) => {
     e.preventDefault();
   }
 
   return (
     <div css={chatStyle}>
-      <div css={viewStyle}>
-
-      </div>
+      <ChatView />
       <form css={css`display:flex;height:30px;`} onSubmit={chatHandler}>
         <TextField sx={textFieldStyle} />
         <Button variant="contained" sx={sendButtonStyle} onClick={chatHandler}>보내기</Button>

@@ -2,12 +2,15 @@
 import { css } from '@emotion/react';
 import { Fab, List, ListItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 import Room from './Room';
 import CreateRoom from './createRoom/CreateRoom';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import birdImg from '../../img/bird.png'
+import SortRoom from './sort/SortRoom';
+import { getDistance } from '../util/getDistance';
 
 const roomListStyle = css`
     flex-grow: 1;
@@ -42,6 +45,17 @@ const createRoomButtonStyle = {
     backgroundColor: "white"
 };
 
+const openSortButtonStyle = {
+    margin: 0,
+    top: 'auto',
+    right: 20,
+    bottom: 85,
+    left: 'auto',
+    position: 'fixed',
+    color: "#2BAE66",
+    backgroundColor: "white"
+};
+
 const noRoomStyle = css`
     display: flex;
     justify-content: center;
@@ -55,11 +69,22 @@ const noRoomStyle = css`
 `;
 
 function RoomList() {
-    const [open, setOpen] = useState(false);
+    const [openCreateRoom, setOpenCreateRoom] = useState(false);
+    const [openSort, setOpenSort] = useState(false);
+    const [sortBy, setSortBy] = useState('start');
+    const [sortLoc, setSortLoc] = useState(() => { return { latitude: 0, longitude: 0 } });
     const [roomList, setRoomList] = useState([]);
 
     const addRoom = (room) => {
-        setRoomList((prev) => [...prev, room])
+        setRoomList((prev) => [...prev, room].sort((a, b) => {
+            if (sortBy === 'start') {
+                return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
+            } else if (sortBy === 'end') {
+                return getDistance(a.endLoc.latitude, a.endLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.endLoc.latitude, b.endLoc.longitude, sortLoc.latitude, sortLoc.longitude)
+            } else {
+                return 0;
+            }
+        }))
     }
 
     const reload = () => {
@@ -67,24 +92,44 @@ function RoomList() {
             .then((res) => {
                 const data = res.data;
                 setRoomList(data.map((d) => {
-                    return { id: d.key, start: d.SrcText, end: d.DestText, startLoc: { latitude: d.SrcLatitude, longitude: d.SrcLongitude }, endLoc: { latitude: d.DestLatitude, longitude: d.DestLongitude }, date: dayjs(d.date), time: dayjs('2020-01-01 ' + d.time) };
+                    return { id: d.id, start: d.SrcText, end: d.DestText, startLoc: { latitude: d.SrcLatitude, longitude: d.SrcLongitude }, endLoc: { latitude: d.DestLatitude, longitude: d.DestLongitude }, date: dayjs(d.date), time: dayjs('2020-01-01 ' + d.time) };
+                }).sort((a, b) => {
+                    if (sortBy === 'start') {
+                        return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
+                    } else if (sortBy === 'end') {
+                        return getDistance(a.endLoc.latitude, a.endLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.endLoc.latitude, b.endLoc.longitude, sortLoc.latitude, sortLoc.longitude)
+                    } else {
+                        return 0;
+                    }
                 }))
             })
     }
 
-    const clickHandler = (e) => {
+    const sortRoomClickHandler = (e) => {
         e.preventDefault();
-        setOpen(true);
+        setOpenSort(true);
+    }
+
+    const createRoomClickHandler = (e) => {
+        e.preventDefault();
+        setOpenCreateRoom(true);
     }
 
     useEffect(() => {
-        reload();
+        navigator.geolocation.getCurrentPosition(({ coords }) => {
+            setSortLoc({ latitude: coords.latitude, longitude: coords.longitude });
+        });
     }, [])
+
+    useEffect(() => {
+        reload();
+    }, [sortLoc, sortBy])// eslint-disable-line react-hooks/exhaustive-deps
+    
 
     return (
         <>
             {roomList.length === 0
-                ? <div css={noRoomStyle}><img src={birdImg} alt='noRoom' css={css`position:relative;bottom:30px;width:128px;height:auto`}/><pre> . . .</pre></div>
+                ? <div css={noRoomStyle}><img src={birdImg} alt='noRoom' css={css`position:relative;bottom:30px;width:128px;height:auto`} /><pre> . . .</pre></div>
                 : <List
                     css={roomListStyle}
                 >
@@ -97,10 +142,14 @@ function RoomList() {
                     })}
                 </List>
             }
-            <Fab style={createRoomButtonStyle} onClick={clickHandler}>
+            <Fab style={openSortButtonStyle} onClick={sortRoomClickHandler}>
+                <SearchIcon />
+            </Fab>
+            <SortRoom open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc}/>
+            <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                 <AddIcon />
             </Fab>
-            <CreateRoom open={open} setOpen={setOpen} addRoom={addRoom} />
+            <CreateRoom open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} />
         </>
     )
 }
