@@ -8,7 +8,7 @@ import { IconButton } from '@mui/material';
 
 const validColor = "#2BAE66";
 
-function SelectLoc({ loc, setLoc }) {
+function SelectLoc({ loc, setLoc, sortBy }) {
     const [open, setOpen] = useState(false);
     const mapRef = useRef(null);
 
@@ -32,10 +32,15 @@ function SelectLoc({ loc, setLoc }) {
 
             const marker = new kakao.maps.Marker({
                 // 지도 중심좌표에 마커를 생성합니다 
-                position: new kakao.maps.LatLng(loc.latitude, loc.longitude)
+                position: new kakao.maps.LatLng(loc.latitude, loc.longitude),
             });
-            // 지도에 마커를 표시합니다
             marker.setMap(map);
+
+            const customOverlay = new kakao.maps.CustomOverlay({
+                map: map,
+                position: new kakao.maps.LatLng(loc.latitude, loc.longitude),
+                content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">검색기준: ${sortBy === 'start' ? '출발지' : '도착지'}</div>`,
+            });
 
             kakao.maps.event.addListener(map, 'click', (event) => {
                 // 클릭한 위도, 경도 정보를 가져옵니다 

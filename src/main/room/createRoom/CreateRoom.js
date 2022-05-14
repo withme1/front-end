@@ -65,9 +65,11 @@ const textFieldStyle = {
 
 function CreateRoom({ open, setOpen, addRoom }) {
     const [start, setStart] = useState("");
-    const [startLoc, setStartLoc] = useState(null);
+    const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
+    const [startActivate, setStartActivate] = useState(false);
     const [end, setEnd] = useState("");
-    const [endLoc, setEndLoc] = useState(null);
+    const [endLoc, setEndLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
+    const [endActivate, setEndActivate] = useState(false);
     const [startDay, setStartDay] = useState(dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
 
@@ -84,7 +86,6 @@ function CreateRoom({ open, setOpen, addRoom }) {
         }).then((res) => {
             const rawData = res.data;
             const id = rawData._id;
-            localStorage.setItem("random", rawData._random);
             addRoom({
                 id: parseInt(id),
                 start: start,
@@ -98,9 +99,10 @@ function CreateRoom({ open, setOpen, addRoom }) {
     }
 
     const isValidInput = () => {
-        if (checkText(start) && startLoc !== null && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
+        if (checkText(start) && startLoc !== null && startActivate && endActivate && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
             return true;
         }
+        return false;
     }
 
     const submitHandler = (e) => {
@@ -120,10 +122,10 @@ function CreateRoom({ open, setOpen, addRoom }) {
         >
             <div css={createRoomDivStyle}>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} />
+                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate}/>
                 </Box>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} />
+                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate}/>
                 </Box>
                 <br />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 
 export const checkText = (s) => {
-    if (s.length >= 10) {
+    if (s === '' || s.length >= 10) {
         return false;
     }
 

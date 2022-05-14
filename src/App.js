@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import Header from './header/Header';
 import Main from './main/Main';
 

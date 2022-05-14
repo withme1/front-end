@@ -8,7 +8,7 @@ import { IconButton } from '@mui/material';
 
 const validColor = "#2BAE66";
 
-function SelectLoc({ loc, setLoc }) {
+function SelectLoc({ loc, setLoc, text, activate, setActivate }) {
     const [open, setOpen] = useState(false);
     const mapRef = useRef(null);
 
@@ -31,26 +31,34 @@ function SelectLoc({ loc, setLoc }) {
                 };
                 const map = new kakao.maps.Map(mapRef.current, options); //지도 생성 및 객체 리턴
 
-                // const marker = new kakao.maps.Marker({
-                //     // 지도 중심좌표에 마커를 생성합니다 
-                //     position: new kakao.maps.LatLng(locc.latitude, locc.longitude)
-                // });
-                // // 지도에 마커를 표시합니다
-                // marker.setMap(map);
+                if (activate) {
+                    const marker = new kakao.maps.Marker({
+                        // 지도 중심좌표에 마커를 생성합니다 
+                        position: new kakao.maps.LatLng(locc.latitude, locc.longitude),
+                    });
+                    marker.setMap(map);
+
+                    const customOverlay = new kakao.maps.CustomOverlay({
+                        map: map,
+                        position: new kakao.maps.LatLng(locc.latitude, locc.longitude),
+                        content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">${text}</div>`,
+                    });
+                }
 
                 kakao.maps.event.addListener(map, 'click', (event) => {
                     // 클릭한 위도, 경도 정보를 가져옵니다 
                     const latlng = event.latLng;
                     setLoc({ latitude: latlng.getLat(), longitude: latlng.getLng() })
                     setOpen(false);
+                    setActivate(true);
                 });
             }
-            navigator.geolocation.getCurrentPosition(({ coords }) => drawMap(coords))
+            drawMap(loc)
         })
     }
     return (
         <>
-            <IconButton sx={{ "svg.MuiSvgIcon-root": { color: loc === null ? 'none' : validColor } }} size="large" onClick={iconClickHandler}>
+            <IconButton sx={{ "svg.MuiSvgIcon-root": { color: activate ? validColor : 'none' } }} size="large" onClick={iconClickHandler}>
                 <FmdGoodOutlinedIcon fontSize="inherit" />
             </IconButton>
             <Modal

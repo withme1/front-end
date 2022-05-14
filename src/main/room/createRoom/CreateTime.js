@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 import { TimePicker } from '@mui/x-date-pickers'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { checkTime } from './ValidCheck';
 
 const validColor = "#2BAE66";
@@ -36,6 +36,10 @@ function CreateTime({ day, time, setTime, textStyle}) {
         setTime(t);
         setValidStyle(getValidStyle(day, t));
     }
+
+    useEffect(() => {
+        setValidStyle(getValidStyle(day, time));
+    }, [day, time])
 
     return (
         <TimePicker

@@ -18,6 +18,7 @@ const mapStyle = css`
 `;
 
 const clickStyle = css`
+    color: #FCF6F5;
     text-decoration: none;
     &:visited {
         color: #FCF6F5;

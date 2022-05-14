@@ -25,7 +25,7 @@ const getValidStyle = (s) => {
     };
 }
 
-function CreateLocInput({ label, textStyle, text, setText, loc, setLoc }) {
+function CreateLocInput({ label, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
     const [textValidStyle, setTextValidStyle] = useState(() => {
         return getValidStyle(text);
     });
@@ -33,13 +33,13 @@ function CreateLocInput({ label, textStyle, text, setText, loc, setLoc }) {
     const changeHandler = (e) => {
         const value = e.target.value;
         setText(value);
-        setTextValidStyle(getValidStyle(value))
+        setTextValidStyle(getValidStyle(value));
     }
 
     return (
         <>
             <TextField sx={[textStyle, textValidStyle]} value={text} onChange={changeHandler} id="outlined-basic" label={label} variant="outlined" />
-            <SelectLoc loc={loc} setLoc={setLoc} />
+            <SelectLoc loc={loc} setLoc={setLoc} text={label} activate={activate} setActivate={setActivate}/>
         </>
     )
 }

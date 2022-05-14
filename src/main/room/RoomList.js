@@ -72,7 +72,7 @@ function RoomList() {
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
-    const [sortLoc, setSortLoc] = useState(() => { return { latitude: 0, longitude: 0 } });
+    const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
     const [roomList, setRoomList] = useState([]);
 
     const addRoom = (room) => {
@@ -116,15 +116,9 @@ function RoomList() {
     }
 
     useEffect(() => {
-        navigator.geolocation.getCurrentPosition(({ coords }) => {
-            setSortLoc({ latitude: coords.latitude, longitude: coords.longitude });
-        });
-    }, [])
-
-    useEffect(() => {
         reload();
     }, [sortLoc, sortBy])// eslint-disable-line react-hooks/exhaustive-deps
-    
+
 
     return (
         <>
@@ -145,7 +139,7 @@ function RoomList() {
             <Fab style={openSortButtonStyle} onClick={sortRoomClickHandler}>
                 <SearchIcon />
             </Fab>
-            <SortRoom open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc}/>
+            <SortRoom open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc} />
             <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                 <AddIcon />
             </Fab>

@@ -64,9 +64,9 @@ function SearchRoom({ open, setOpen, sortBy, setSortBy, sortLoc, setSortLoc }) {
                         도착지
                     </ToggleButton>
                 </ToggleButtonGroup>
-                <SelectLoc loc={sortLoc} setLoc={setSortLoc} />
+                <SelectLoc loc={sortLoc} setLoc={setSortLoc} sortBy={sortBy}/>
                 <br />
-                <Button css={submitStyle} onClick={()=>setOpen(false)} variant="outlined">확인</Button>
+                <Button css={submitStyle} onClick={()=>setOpen(false)} variant="outlined">닫기</Button>
             </div>
         </Modal>
     )
