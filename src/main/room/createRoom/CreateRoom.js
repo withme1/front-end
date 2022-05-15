@@ -4,14 +4,14 @@ import { Button } from '@mui/material';
 import { Box, } from '@mui/system';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal/lib/components/Modal';
 import 'dayjs/locale/ko';
 import CreateLocInput from './CreateLocInput';
 import CreateDate from './CreateDate';
 import CreateTime from './CreateTime';
 import { checkText, checkDate, checkTime } from './ValidCheck'
-import axios from 'axios';
+import { getSocket } from '../../../socket/socket'
 
 
 const dayjs = require("dayjs");
@@ -63,7 +63,7 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ open, setOpen, addRoom }) {
+function CreateRoom({ open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [start, setStart] = useState("");
     const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
     const [startActivate, setStartActivate] = useState(false);
@@ -74,7 +74,7 @@ function CreateRoom({ open, setOpen, addRoom }) {
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
 
     const requestCreateRoom = () => {
-        axios.post('http://211.229.250.42:25030/api/create_room', {
+        getSocket().emit('createRoomReq', {
             SrcText: start,
             DestText: end,
             SrcLatitude: startLoc.latitude,
@@ -83,20 +83,52 @@ function CreateRoom({ open, setOpen, addRoom }) {
             DestLongitude: endLoc.longitude,
             date: startDay.format('YYYY-MM-DD'),
             time: startTime.format('HH:mm:ss')
-        }).then((res) => {
-            const rawData = res.data;
-            const id = rawData._id;
-            addRoom({
-                id: parseInt(id),
-                start: start,
-                startLoc: startLoc,
-                end: end,
-                endLoc: endLoc,
-                date: startDay,
-                time: startTime
-            })
-        })
+        });
     }
+
+    useEffect(() => {
+        getSocket().on('createRoomRes', (res) => {
+            if (res.ok) {
+                const room = res.room;
+                setIsInRoom(true);
+                setIsHost(true);
+                setRoomId(parseInt(room.id));
+                addRoom({
+                    id: parseInt(room.id),
+                    start: room.SrcText,
+                    startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
+                    end: room.DestText,
+                    endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                    date: dayjs(room.date),
+                    time: dayjs('2020-01-01 ' + room.time)
+                });
+                addMessage({type: 'system', text: '방 생성'});
+            } else {
+                alert('createRoomRes error: ' + res.reason)
+            }
+        });
+
+        getSocket().on('remakeRoomRes', (res) => {
+            if (res.ok) {
+                const room = res.room;
+                deleteRoom(roomId);
+                setIsInRoom(true);
+                setIsHost(true);
+                setRoomId(parseInt(room.id));
+                addRoom({
+                    id: parseInt(room.id),
+                    start: room.SrcText,
+                    startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
+                    end: room.DestText,
+                    endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                    date: dayjs(room.date),
+                    time: dayjs('2020-01-01 ' + room.time)
+                })
+            } else {
+                console.log('remakeRoomRes error: ' + res.reason)
+            }
+        });
+    }, [])
 
     const isValidInput = () => {
         if (checkText(start) && startLoc !== null && startActivate && endActivate && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
@@ -106,11 +138,34 @@ function CreateRoom({ open, setOpen, addRoom }) {
     }
 
     const submitHandler = (e) => {
-        e.preventDefault();
-        if (isValidInput()) {
-            requestCreateRoom();
-            setOpen(false);
+        if (!isValidInput()) {
+            return;
         }
+        if (isInRoom) {
+            let message;
+            if (isHost)
+                message = "기존 방을 삭제하시겠습니까?";
+            else
+                message = "기존 방에서 나가시겠습니까?";
+            if (window.confirm(message)) {
+                setIsHost(false);
+                setIsInRoom(false);
+                getSocket().emit('remakeRoomReq', {
+                    SrcText: start,
+                    DestText: end,
+                    SrcLatitude: startLoc.latitude,
+                    SrcLongitude: startLoc.longitude,
+                    DestLatitude: endLoc.latitude,
+                    DestLongitude: endLoc.longitude,
+                    date: startDay.format('YYYY-MM-DD'),
+                    time: startTime.format('HH:mm:ss')
+                });
+                setOpen(false);
+            }
+            return;
+        }
+        requestCreateRoom();
+        setOpen(false);
     }
 
     return (
@@ -122,10 +177,10 @@ function CreateRoom({ open, setOpen, addRoom }) {
         >
             <div css={createRoomDivStyle}>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate}/>
+                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate} />
                 </Box>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate}/>
+                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate} />
                 </Box>
                 <br />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>

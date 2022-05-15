@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import dayjs from 'dayjs';
-import { useState } from 'react';
 import MyChat from './type/MyChat';
 import OtherChat from './type/OtherChat';
 import SystemChat from './type/SystemChat';
@@ -23,14 +21,9 @@ const viewStyle = css`
   flex-direction: column;
 `;
 
-function ChatView() {
-    const [chatList, setChatList] = useState([
-        { type: 'system', text: '상대 입장', time: dayjs() },
-        { type: 'other', text: 'hihi', time: dayjs() },
-        { type: 'me', text: 'hihdddddddddddddddddddddddddddddddddddddddddi', time: dayjs() },
-        { type: 'me', text: 'hhiihi', time: dayjs() }]);
+function ChatView({chatList, setChatList, chatStyleRef}) {
     return (
-        <div css={viewStyle}>
+        <div css={[viewStyle]} ref={chatStyleRef}>
             {chatList.map((chat, i) => {
                 if (chat.type === 'me')
                     return <MyChat text={chat.text} time={chat.time} key={i} />

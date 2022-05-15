@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import Button from '@mui/material/Button';
+import { getSocket } from '../../socket/socket'
+import { useEffect } from 'react';
 
 const buttonStyle = css`
     border: 1px solid #FCF6F5;
@@ -13,9 +15,10 @@ const buttonStyle = css`
     }
 `;
 
-function EnterButton() {
+function EnterButton({ enterId }) {
   const clickHandler = (e) => {
     e.preventDefault();
+    getSocket().emit('joinRoomReq', enterId);
   }
 
   return (

@@ -23,12 +23,12 @@ const roomStyle = css`
     
 `;
 
-function Room({ roomData }) {
+function Room({ roomData, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId }) {
     return (
         <div css={roomStyle}>
             <StartTime time={roomData.time} />
             <Start2End start={roomData.start} startLoc={roomData.startLoc} end={roomData.end} endLoc={roomData.endLoc} />
-            <EnterButton />
+            <EnterButton enterId={roomData.id}/>
         </div>
     )
 }

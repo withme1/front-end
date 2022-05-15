@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import io from 'socket.io-client'
+import { setSocket } from './socket/socket';
+
+const socket = io.connect('http://211.229.250.42:25030/', {transports: ['websocket']})
+setSocket(socket);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

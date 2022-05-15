@@ -6,11 +6,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import Room from './Room';
 import CreateRoom from './createRoom/CreateRoom';
 import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
-import axios from 'axios';
 import birdImg from '../../img/bird.png'
 import SortRoom from './sort/SortRoom';
 import { getDistance } from '../util/getDistance';
+import { getSocket } from '../../socket/socket';
+import dayjs from 'dayjs';
 
 const roomListStyle = css`
     flex-grow: 1;
@@ -68,15 +68,14 @@ const noRoomStyle = css`
     font-size: 4em;
 `;
 
-function RoomList() {
+function RoomList({ roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
     const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
-    const [roomList, setRoomList] = useState([]);
 
-    const addRoom = (room) => {
-        setRoomList((prev) => [...prev, room].sort((a, b) => {
+    const getSortedList = (roomList) => {
+        return roomList.sort((a, b) => {
             if (sortBy === 'start') {
                 return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
             } else if (sortBy === 'end') {
@@ -84,25 +83,15 @@ function RoomList() {
             } else {
                 return 0;
             }
-        }))
+        })
     }
 
-    const reload = () => {
-        axios.get('http://211.229.250.42:25030/api/room_list')
-            .then((res) => {
-                const data = res.data;
-                setRoomList(data.map((d) => {
-                    return { id: d.id, start: d.SrcText, end: d.DestText, startLoc: { latitude: d.SrcLatitude, longitude: d.SrcLongitude }, endLoc: { latitude: d.DestLatitude, longitude: d.DestLongitude }, date: dayjs(d.date), time: dayjs('2020-01-01 ' + d.time) };
-                }).sort((a, b) => {
-                    if (sortBy === 'start') {
-                        return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
-                    } else if (sortBy === 'end') {
-                        return getDistance(a.endLoc.latitude, a.endLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.endLoc.latitude, b.endLoc.longitude, sortLoc.latitude, sortLoc.longitude)
-                    } else {
-                        return 0;
-                    }
-                }))
-            })
+    const addRoom = (room) => {
+        setRoomList((prev) => getSortedList([...prev, room]))
+    }
+
+    const deleteRoom = (id) => {
+        setRoomList((prev) => prev.filter((r) => r.id !== id))
     }
 
     const sortRoomClickHandler = (e) => {
@@ -116,8 +105,51 @@ function RoomList() {
     }
 
     useEffect(() => {
-        reload();
+        setRoomList(getSortedList(roomList))
     }, [sortLoc, sortBy])// eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        const soc = getSocket();
+        soc.on('roomCreated', (room) => {
+            addRoom({
+                id: room.id,
+                start: room.SrcText,
+                end: room.DestText,
+                startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
+                endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                date: dayjs(room.date),
+                time: dayjs('2020-01-01 ' + room.time)
+            })
+        })
+
+        soc.on('roomListRes', (rooms) => {
+            setRoomList(getSortedList(rooms.map((room) => ({
+                id: room.id,
+                start: room.SrcText,
+                end: room.DestText,
+                startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
+                endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                date: dayjs(room.date),
+                time: dayjs('2020-01-01 ' + room.time)
+            }))));
+        })
+        soc.emit('roomListReq');
+
+        getSocket().on('joinRoomRes', (res) => {
+            if (res.ok) {
+                setRoomId(parseInt(res.id));
+                setIsInRoom(true);
+                setIsHost(false);
+                addMessage({ type: 'system', text: "입장" });
+            } else {
+                alert(res.reason);
+            }
+        })
+
+        getSocket().on('roomJoined', (res) => {
+            addMessage({ type: 'system', text: "상대 입장" })
+        })
+    }, [])
 
 
     return (
@@ -129,8 +161,8 @@ function RoomList() {
                 >
                     {roomList.map((data) => {
                         return (
-                            <ListItem key={data.id} css={listItemStyle}>
-                                <Room roomData={data} />
+                            <ListItem key={data.id} css={listItemStyle} >
+                                <Room roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
                             </ListItem>
                         )
                     })}
@@ -143,7 +175,7 @@ function RoomList() {
             <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                 <AddIcon />
             </Fab>
-            <CreateRoom open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} />
+            <CreateRoom open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
         </>
     )
 }
