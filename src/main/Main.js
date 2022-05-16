@@ -23,20 +23,28 @@ function Main() {
         { type: 'me', text: 'hihdddddddddddddddddddddddddddddddddddddddddi', time: dayjs() },
         { type: 'me', text: 'hhiihi', time: dayjs() }]);
     const chatStyleRef = useRef();
+    const [remake, setRemake] = useState(false);
+    const [rejoin, setRejoin] = useState(null);
+    const [fullIds, setFullIds] = useState(new Set()); 
 
     const addMessage = (m) => {
         setChatList((prev) => [...prev, m]);
     }
 
     useEffect(() => {
-        chatStyleRef.current.scrollTop = chatStyleRef.current.scrollHeight
-    }, [chatList]);
+        chatStyleRef.current.scrollTop = chatStyleRef.current.scrollHeight;
+    }, [chatList])
 
     useEffect(() => {
-        getSocket().removeAllListeners("roomDeleted");
         getSocket().on('roomDeleted', (id) => {
             setRoomList((prev) => (prev.filter((room) => room.id !== id)));
-            if (isInRoom) {
+        })
+    }, [])
+
+    useEffect(() => {
+        getSocket().removeAllListeners("roomDeletedC");
+        getSocket().on('roomDeletedC', () => {
+            if (isInRoom && !isHost) {
                 addMessage({ type: 'system', text: '방 삭제됨' });
                 setIsInRoom(false);
                 setIsHost(false);
@@ -58,9 +66,9 @@ function Main() {
 
     return (
         <div className="main" css={mainStyle}>
-            <MobileChat isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
-            <ComputerChat isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
-            <RoomList roomList={roomList} setRoomList={setRoomList} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} addMessage={addMessage} />
+            <MobileChat rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+            <ComputerChat rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+            <RoomList fullIds={fullIds} setFullIds={setFullIds} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} roomList={roomList} setRoomList={setRoomList} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} addMessage={addMessage} />
         </div>
     )
 }

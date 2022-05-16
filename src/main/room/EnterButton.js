@@ -2,7 +2,6 @@
 import { css } from '@emotion/react';
 import Button from '@mui/material/Button';
 import { getSocket } from '../../socket/socket'
-import { useEffect } from 'react';
 
 const buttonStyle = css`
     border: 1px solid #FCF6F5;
@@ -15,10 +14,30 @@ const buttonStyle = css`
     }
 `;
 
-function EnterButton({ enterId }) {
+function EnterButton({ roomId, setRejoin, enterId, isInRoom, isHost }) {
   const clickHandler = (e) => {
     e.preventDefault();
-    getSocket().emit('joinRoomReq', enterId);
+    if (enterId === roomId) {
+      window.alert('이미 들어간 방입니다.');
+      return;
+    }
+    if (!isInRoom) {
+      getSocket().emit('joinRoomReq', enterId);
+      return;
+    }
+    let message;
+    if (isHost)
+      message = '기존 방을 삭제하시겠습니까?';
+    else
+      message = '기존 방에서 퇴장하시겠습니까?';
+    if (window.confirm(message)) {
+      if (isHost) {
+        getSocket().emit('deleteRoomReq');
+      } else {
+        getSocket().emit('quitRoomReq')
+      }
+      setRejoin(enterId);
+    }
   }
 
   return (

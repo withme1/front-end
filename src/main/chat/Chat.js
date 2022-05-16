@@ -63,7 +63,7 @@ const checkMessage = (m) => {
   return true;
 }
 
-function Chat({ isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef }) {
+function Chat({remake, setRemake, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef }) {
   const [message, setMessage] = useState('');
 
   const chatHandler = (e) => {
@@ -85,27 +85,6 @@ function Chat({ isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, cha
   }
 
   useEffect(() => {
-    getSocket().on('deleteRoomRes', (res) => {
-      if (res.ok) {
-        setRoomList((prev) => (prev.filter((room) => room.id !== res.id)));
-        addMessage({ type: 'system', text: '방 삭제' });
-        setIsInRoom(false);
-        setIsHost(false);
-        setRoomId(null);
-      } else {
-        alert(res.reason)
-      }
-    })
-    getSocket().on('quitRoomRes', (res) => {
-      if (res.ok) {
-        addMessage({ type: 'system', text: '퇴장' });
-        setIsInRoom(false);
-        setIsHost(false);
-        setRoomId(null);
-      } else {
-        alert(res.reason)
-      }
-    })
     getSocket().on('sendMessageRes', (res) => {
       if (res.ok) {
         addMessage({ type: 'me', text: res.message, time: dayjs('2020-01-01 ' + res.time) });

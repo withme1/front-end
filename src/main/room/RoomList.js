@@ -68,7 +68,7 @@ const noRoomStyle = css`
     font-size: 4em;
 `;
 
-function RoomList({ roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
+function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
@@ -135,6 +135,22 @@ function RoomList({ roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsH
         })
         soc.emit('roomListReq');
 
+        soc.on('fullRoomRes', (ids) => {
+            setFullIds(new Set(ids.map(id=>parseInt(id))));
+        })
+        soc.emit('fullRoomReq');
+
+        soc.on('roomFulled', (id) => {
+            setFullIds((prev) => new Set(prev.add(parseInt(id))));
+        })
+
+        soc.on('roomEmptied', (id) => {
+            setFullIds((prev) => {
+                prev.delete(id);
+                return new Set(prev);
+            });
+        })
+
         getSocket().on('joinRoomRes', (res) => {
             if (res.ok) {
                 setRoomId(parseInt(res.id));
@@ -159,10 +175,10 @@ function RoomList({ roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsH
                 : <List
                     css={roomListStyle}
                 >
-                    {roomList.map((data) => {
+                    {roomList.filter((room) => !fullIds.has(room.id)).map((data) => {
                         return (
                             <ListItem key={data.id} css={listItemStyle} >
-                                <Room roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
+                                <Room setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
                             </ListItem>
                         )
                     })}
@@ -175,7 +191,7 @@ function RoomList({ roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsH
             <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                 <AddIcon />
             </Fab>
-            <CreateRoom open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
+            <CreateRoom rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
         </>
     )
 }

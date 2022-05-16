@@ -63,7 +63,7 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
+function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [start, setStart] = useState("");
     const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
     const [startActivate, setStartActivate] = useState(false);
@@ -107,28 +107,62 @@ function CreateRoom({ open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, set
                 alert('createRoomRes error: ' + res.reason)
             }
         });
-
-        getSocket().on('remakeRoomRes', (res) => {
-            if (res.ok) {
-                const room = res.room;
-                deleteRoom(roomId);
-                setIsInRoom(true);
-                setIsHost(true);
-                setRoomId(parseInt(room.id));
-                addRoom({
-                    id: parseInt(room.id),
-                    start: room.SrcText,
-                    startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
-                    end: room.DestText,
-                    endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
-                    date: dayjs(room.date),
-                    time: dayjs('2020-01-01 ' + room.time)
-                })
-            } else {
-                console.log('remakeRoomRes error: ' + res.reason)
-            }
-        });
     }, [])
+
+    useEffect(() => {
+        getSocket().removeAllListeners('deleteRoomRes');
+        getSocket().on('deleteRoomRes', (res) => {
+            if (res.ok) {
+                if(remake) {
+                    getSocket().emit('createRoomReq', {
+                        SrcText: start,
+                        DestText: end,
+                        SrcLatitude: startLoc.latitude,
+                        SrcLongitude: startLoc.longitude,
+                        DestLatitude: endLoc.latitude,
+                        DestLongitude: endLoc.longitude,
+                        date: startDay.format('YYYY-MM-DD'),
+                        time: startTime.format('HH:mm:ss')
+                    })
+                    setRemake(false);
+                } else if (rejoin !== null) {
+                    getSocket().emit('joinRoomReq', rejoin);
+                    setRejoin(null);
+                }
+                setRoomList((prev) => (prev.filter((room) => room.id !== res.id)));
+                addMessage({ type: 'system', text: '방 삭제' });
+                setIsInRoom(false);
+                setIsHost(false);
+                setRoomId(null);
+            } else {
+                alert(res.reason)
+            }
+        })
+
+        getSocket().removeAllListeners('quitRoomRes');
+        getSocket().on('quitRoomRes', (res) => {
+            addMessage({type: 'system', text: '퇴장'});
+            setIsInRoom(false);
+            setIsHost(false);
+            setRoomId(null);
+            if(remake) {
+                getSocket().emit('createRoomReq', {
+                    SrcText: start,
+                    DestText: end,
+                    SrcLatitude: startLoc.latitude,
+                    SrcLongitude: startLoc.longitude,
+                    DestLatitude: endLoc.latitude,
+                    DestLongitude: endLoc.longitude,
+                    date: startDay.format('YYYY-MM-DD'),
+                    time: startTime.format('HH:mm:ss')
+                })
+                setRemake(false);
+            } else if (rejoin !== null) {
+                getSocket().emit('joinRoomReq', rejoin);
+                setRejoin(null);
+            }
+        }) 
+    }, [rejoin, remake, start, end, startLoc, endLoc, startDay, startTime])
 
     const isValidInput = () => {
         if (checkText(start) && startLoc !== null && startActivate && endActivate && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
@@ -148,18 +182,15 @@ function CreateRoom({ open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, set
             else
                 message = "기존 방에서 나가시겠습니까?";
             if (window.confirm(message)) {
+                if (isHost) {
+                    getSocket().emit('deleteRoomReq');
+                } else {
+                    getSocket().emit('quitRoomReq');
+                }
                 setIsHost(false);
                 setIsInRoom(false);
-                getSocket().emit('remakeRoomReq', {
-                    SrcText: start,
-                    DestText: end,
-                    SrcLatitude: startLoc.latitude,
-                    SrcLongitude: startLoc.longitude,
-                    DestLatitude: endLoc.latitude,
-                    DestLongitude: endLoc.longitude,
-                    date: startDay.format('YYYY-MM-DD'),
-                    time: startTime.format('HH:mm:ss')
-                });
+                setRoomId(null);
+                setRemake(true);
                 setOpen(false);
             }
             return;

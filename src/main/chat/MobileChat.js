@@ -17,7 +17,7 @@ const chatStyle = css`
       height: 100%;
 `;
 
-function MobileChat({isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef}) {
+function MobileChat({remake, setRemake, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef}) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -32,7 +32,7 @@ function MobileChat({isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId
                 onOpen={() => { }}
             >
                 <div css={chatStyle}>
-                    <Chat isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
+                    <Chat remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
                 </div>
             </SwipeableDrawer>
         </>
