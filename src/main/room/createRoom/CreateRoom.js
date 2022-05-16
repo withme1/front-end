@@ -104,7 +104,7 @@ function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, s
                 });
                 addMessage({type: 'system', text: '방 생성'});
             } else {
-                alert('createRoomRes error: ' + res.reason)
+                alert('createRoomRes error: ' + res.reason);
             }
         });
     }, [])
