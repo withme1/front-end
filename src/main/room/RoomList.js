@@ -4,6 +4,7 @@ import { Fab, List, ListItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import Room from './Room';
+import MyRoom from './MyRoom';
 import CreateRoom from './createRoom/CreateRoom';
 import { useEffect, useState } from 'react';
 import birdImg from '../../img/bird.png'
@@ -75,7 +76,8 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
     const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
 
     const getSortedList = (roomList) => {
-        return roomList.sort((a, b) => {
+        console.log(roomId)
+        return [...roomList.filter(room => room.id === roomId), ...roomList.filter(room => room.id !== roomId).sort((a, b) => {
             if (sortBy === 'start') {
                 return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
             } else if (sortBy === 'end') {
@@ -83,7 +85,7 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
             } else {
                 return 0;
             }
-        })
+        })]
     }
 
     const addRoom = (room) => {
@@ -108,9 +110,11 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
         setRoomList(getSortedList(roomList))
     }, [sortLoc, sortBy])// eslint-disable-line react-hooks/exhaustive-deps
 
+
+
     useEffect(() => {
-        const soc = getSocket();
-        soc.on('roomCreated', (room) => {
+        getSocket().removeAllListeners('roomCreated');
+        getSocket().on('roomCreated', (room) => {
             addRoom({
                 id: room.id,
                 start: room.SrcText,
@@ -120,8 +124,13 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
                 date: dayjs(room.date),
                 time: dayjs('2020-01-01 ' + room.time)
             })
-        })
+        });
+        setRoomList((prev) => getSortedList(prev))
+    }, [roomId])
 
+    useEffect(() => {
+        const soc = getSocket();
+        
         soc.on('roomListRes', (rooms) => {
             setRoomList(getSortedList(rooms.map((room) => ({
                 id: room.id,
@@ -178,7 +187,10 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
                     {roomList.filter((room) => !fullIds.has(room.id)).map((data) => {
                         return (
                             <ListItem key={data.id} css={listItemStyle} >
-                                <Room setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
+                                { data.id === roomId
+                                    ? <MyRoom setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
+                                    : <Room setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
+                                }
                             </ListItem>
                         )
                     })}

@@ -87,6 +87,7 @@ function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, s
     }
 
     useEffect(() => {
+        getSocket().removeAllListeners('createRoomRes');
         getSocket().on('createRoomRes', (res) => {
             if (res.ok) {
                 const room = res.room;
@@ -107,7 +108,7 @@ function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, s
                 alert('createRoomRes error: ' + res.reason);
             }
         });
-    }, [])
+    }, [roomId])
 
     useEffect(() => {
         getSocket().removeAllListeners('deleteRoomRes');

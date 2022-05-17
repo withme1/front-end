@@ -1,11 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import dayjs from 'dayjs';
 import { useEffect, useRef, useState } from 'react';
 import ComputerChat from './chat/ComputerChat';
 import MobileChat from './chat/MobileChat';
 import RoomList from './room/RoomList';
 import { getSocket } from '../socket/socket';
+import { useMediaQuery } from 'react-responsive';
 
 const mainStyle = css`
     display: flex;
@@ -17,11 +17,7 @@ function Main() {
     const [isInRoom, setIsInRoom] = useState(false);
     const [isHost, setIsHost] = useState(false);
     const [roomId, setRoomId] = useState(null);
-    const [chatList, setChatList] = useState([
-        { type: 'system', text: '상대 입장', time: dayjs() },
-        { type: 'other', text: 'hihi', time: dayjs() },
-        { type: 'me', text: 'hihdddddddddddddddddddddddddddddddddddddddddi', time: dayjs() },
-        { type: 'me', text: 'hhiihi', time: dayjs() }]);
+    const [chatList, setChatList] = useState([]);
     const chatStyleRef = useRef();
     const [remake, setRemake] = useState(false);
     const [rejoin, setRejoin] = useState(null);
@@ -32,7 +28,8 @@ function Main() {
     }
 
     useEffect(() => {
-        chatStyleRef.current.scrollTop = chatStyleRef.current.scrollHeight;
+        if (chatStyleRef.current)
+            chatStyleRef.current.scrollTop = chatStyleRef.current.scrollHeight;
     }, [chatList])
 
     useEffect(() => {
@@ -64,10 +61,14 @@ function Main() {
 
     }, [isInRoom])
 
+    const isPC = useMediaQuery({query : "(min-width: 700px)"});
+
     return (
         <div className="main" css={mainStyle}>
-            <MobileChat rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
-            <ComputerChat rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+            {isPC
+                ? <ComputerChat roomList={roomList} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+                : <MobileChat roomList={roomList} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+            }
             <RoomList fullIds={fullIds} setFullIds={setFullIds} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} roomList={roomList} setRoomList={setRoomList} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} addMessage={addMessage} />
         </div>
     )

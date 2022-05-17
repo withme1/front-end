@@ -6,10 +6,6 @@ import Chat from './Chat';
 
 const buttonStyle = css`
     border-color: #2BAE66;
-
-    @media (min-width: 950px) {
-        display: none;
-      }
 `;
 
 const chatStyle = css`
@@ -17,7 +13,7 @@ const chatStyle = css`
       height: 100%;
 `;
 
-function MobileChat({remake, setRemake, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef}) {
+function MobileChat({roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, chatList, setChatList, addMessage, setRoomList, chatStyleRef}) {
     const [open, setOpen] = useState(false);
 
     return (
@@ -32,7 +28,7 @@ function MobileChat({remake, setRemake, isInRoom, setIsInRoom, isHost, setIsHost
                 onOpen={() => { }}
             >
                 <div css={chatStyle}>
-                    <Chat remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
+                    <Chat roomList={roomList} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef}/>
                 </div>
             </SwipeableDrawer>
         </>
