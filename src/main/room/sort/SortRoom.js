@@ -43,16 +43,22 @@ const submitStyle = css`
     }
 `;
 
-function SearchRoom({ open, setOpen, sortBy, setSortBy, sortLoc, setSortLoc }) {
+function SearchRoom({ setOpenCreateButton, setOpenSortButton, open, setOpen, sortBy, setSortBy, sortLoc, setSortLoc }) {
     const sortByChangeHandler = (event, newValue) => {
         setSortBy(newValue);
+    }
+
+    const closeModalHandler = () => {
+        setOpen(false);
+        setOpenCreateButton(true);
+        setOpenSortButton(true);
     }
 
     return (
         <Modal
             style={modalStyle}
             isOpen={open}
-            onRequestClose={() => setOpen(false)}
+            onRequestClose={closeModalHandler}
             ariaHideApp={false}
         >
             <div css={searchRoomDivStyle}>
@@ -66,7 +72,7 @@ function SearchRoom({ open, setOpen, sortBy, setSortBy, sortLoc, setSortLoc }) {
                 </ToggleButtonGroup>
                 <SelectLoc loc={sortLoc} setLoc={setSortLoc} sortBy={sortBy}/>
                 <br />
-                <Button css={submitStyle} onClick={()=>setOpen(false)} variant="outlined">닫기</Button>
+                <Button css={submitStyle} onClick={closeModalHandler} variant="outlined">닫기</Button>
             </div>
         </Modal>
     )

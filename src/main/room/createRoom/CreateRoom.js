@@ -52,6 +52,16 @@ const submitStyle = css`
     }
 `;
 
+const closeStyle = css`
+    color: #2BAE66;
+    border: 1px solid #2BAE66;
+
+    &:hover {
+        color: #2BAE66;
+        border: 1px solid #2BAE66;
+    }
+`;
+
 const validColor = "#2BAE66";
 
 const textFieldStyle = {
@@ -63,7 +73,7 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
+function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [start, setStart] = useState("");
     const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
     const [startActivate, setStartActivate] = useState(false);
@@ -173,6 +183,16 @@ function CreateRoom({ clearMessage, rejoin, setRejoin, setRoomList, remake, setR
         return false;
     }
 
+    const closeModalHandler = () => {
+        setOpen(false);
+        setOpenCreateButton(true);
+        setOpenSortButton(true);
+    }
+
+    const closeHandler = (e) => {
+        closeModalHandler();
+    }
+
     const submitHandler = (e) => {
         if (!isValidInput()) {
             return;
@@ -193,19 +213,19 @@ function CreateRoom({ clearMessage, rejoin, setRejoin, setRoomList, remake, setR
                 setIsInRoom(false);
                 setRoomId(null);
                 setRemake(true);
-                setOpen(false);
+                closeModalHandler();
             }
             return;
         }
         requestCreateRoom();
-        setOpen(false);
+        closeModalHandler();
     }
 
     return (
         <Modal
             style={modalStyle}
             isOpen={open}
-            onRequestClose={() => setOpen(false)}
+            onRequestClose={closeModalHandler}
             ariaHideApp={false}
         >
             <div css={createRoomDivStyle}>
@@ -228,6 +248,8 @@ function CreateRoom({ clearMessage, rejoin, setRejoin, setRoomList, remake, setR
                 <br />
                 <Box css={inputComponentStyle}>
                     <Button css={submitStyle} onClick={submitHandler} variant="outlined">확인</Button>
+                    <div css={css`padding: 10px;`}></div>
+                    <Button css={closeStyle} onClick={closeHandler} variant="outlined">닫기</Button>
                 </Box>
             </div>
         </Modal >

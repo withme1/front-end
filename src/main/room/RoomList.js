@@ -74,6 +74,8 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
     const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
+    const [openCreateButton, setOpenCreateButton] = useState(true);
+    const [openSortButton, setOpenSortButton] = useState(true);
 
     const getSortedList = (roomList) => {
         return [...roomList.filter(room => room.id === roomId), ...roomList.filter(room => room.id !== roomId).sort((a, b) => {
@@ -97,11 +99,15 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
     const sortRoomClickHandler = (e) => {
         e.preventDefault();
+        setOpenCreateButton(false);
+        setOpenSortButton(false);
         setOpenSort(true);
     }
 
     const createRoomClickHandler = (e) => {
         e.preventDefault();
+        setOpenCreateButton(false);
+        setOpenSortButton(false);
         setOpenCreateRoom(true);
     }
 
@@ -129,7 +135,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
     useEffect(() => {
         const soc = getSocket();
-        
+
         soc.on('roomListRes', (rooms) => {
             setRoomList(getSortedList(rooms.map((room) => ({
                 id: room.id,
@@ -144,7 +150,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
         soc.emit('roomListReq');
 
         soc.on('fullRoomRes', (ids) => {
-            setFullIds(new Set(ids.map(id=>parseInt(id))));
+            setFullIds(new Set(ids.map(id => parseInt(id))));
         })
         soc.emit('fullRoomReq');
 
@@ -187,7 +193,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                     {roomList.filter((room) => !fullIds.has(room.id)).map((data) => {
                         return (
                             <ListItem key={data.id} css={listItemStyle} >
-                                { data.id === roomId
+                                {data.id === roomId
                                     ? <MyRoom setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
                                     : <Room setRejoin={setRejoin} roomData={data} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} />
                                 }
@@ -196,14 +202,20 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                     })}
                 </List>
             }
-            <Fab style={openSortButtonStyle} onClick={sortRoomClickHandler}>
-                <SearchIcon />
-            </Fab>
-            <SortRoom open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc} />
-            <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
-                <AddIcon />
-            </Fab>
-            <CreateRoom clearMessage={clearMessage} rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
+            {openSortButton
+                ? <Fab style={openSortButtonStyle} onClick={sortRoomClickHandler}>
+                    <SearchIcon />
+                </Fab>
+                : <></>
+            }
+                <SortRoom setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc} />
+            {openCreateButton
+                ? <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
+                    <AddIcon />
+                  </Fab>
+                : <></>
+            }
+            <CreateRoom setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} clearMessage={clearMessage} rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage} />
         </>
     )
 }
