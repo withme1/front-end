@@ -138,11 +138,11 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
         soc.on('roomListRes', (rooms) => {
             setRoomList(getSortedList(rooms.map((room) => ({
-                id: room.id,
+                id: parseInt(room.id),
                 start: room.SrcText,
                 end: room.DestText,
-                startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
-                endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                startLoc: { latitude: parseFloat(room.SrcLatitude), longitude: parseFloat(room.SrcLongitude) },
+                endLoc: { latitude: parseFloat(room.DestLatitude), longitude: parseFloat(room.DestLongitude) },
                 date: dayjs(room.date),
                 time: dayjs('2020-01-01 ' + room.time)
             }))));
