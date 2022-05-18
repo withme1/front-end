@@ -79,6 +79,7 @@ function ChatMapInfo({ room }) {
         <>
             <Button sx={mapButtonSytle} onClick={clickHandler}>위치</Button>
             <Modal
+                style={{overlay: {zIndex: 2000}}}
                 isOpen={open}
                 onRequestClose={() => setOpen(false)}
                 ariaHideApp={false}

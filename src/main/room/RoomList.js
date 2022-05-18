@@ -69,7 +69,7 @@ const noRoomStyle = css`
     font-size: 4em;
 `;
 
-function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
+function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
@@ -161,6 +161,7 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
 
         getSocket().on('joinRoomRes', (res) => {
             if (res.ok) {
+                clearMessage();
                 setRoomId(parseInt(res.id));
                 setIsInRoom(true);
                 setIsHost(false);
@@ -202,7 +203,7 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
             <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                 <AddIcon />
             </Fab>
-            <CreateRoom rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
+            <CreateRoom clearMessage={clearMessage} rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage}/>
         </>
     )
 }

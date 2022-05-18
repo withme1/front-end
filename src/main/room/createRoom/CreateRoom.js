@@ -63,7 +63,7 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
+function CreateRoom({ clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [start, setStart] = useState("");
     const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
     const [startActivate, setStartActivate] = useState(false);
@@ -91,6 +91,7 @@ function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, s
         getSocket().on('createRoomRes', (res) => {
             if (res.ok) {
                 const room = res.room;
+                clearMessage();
                 setIsInRoom(true);
                 setIsHost(true);
                 setRoomId(parseInt(room.id));
