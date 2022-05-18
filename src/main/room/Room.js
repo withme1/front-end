@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import EnterButton from './EnterButton';
 import StartTime from './StartTime';
 import Start2End from './Start2End';
+import { useState } from 'react';
 
 const roomStyle = css`
     display: flex;
@@ -24,10 +25,22 @@ const roomStyle = css`
 `;
 
 function Room({ setRejoin, roomData, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId }) {
+    const [openMap, setOpenMap] = useState(false);
+
+    const closeMap = () => {
+        setOpenMap(false);
+    }
+
+    const clickHandler = () => {
+        if (!openMap){
+            setOpenMap(true)
+        }
+    }
+
     return (
-        <div css={roomStyle}>
+        <div css={roomStyle} onClick={clickHandler}>
             <StartTime time={roomData.time} />
-            <Start2End start={roomData.start} startLoc={roomData.startLoc} end={roomData.end} endLoc={roomData.endLoc} />
+            <Start2End closeMap={closeMap} openMap={openMap} setOpenMap={setOpenMap} start={roomData.start} startLoc={roomData.startLoc} end={roomData.end} endLoc={roomData.endLoc} />
             <EnterButton roomId={roomId} setRejoin={setRejoin} enterId={roomData.id} isInRoom={isInRoom} isHost={isHost}/>
         </div>
     )

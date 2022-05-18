@@ -8,10 +8,10 @@ const style = css`
     font-size: 20px;
 `;
 
-function Start2End({ start, startLoc, end, endLoc }) {
+function Start2End({ closeMap, openMap, setOpenMap, start, startLoc, end, endLoc }) {
     return (
         <div css={style}>
-            <ModalText start={start} startLoc={startLoc} end={end} endLoc={endLoc}/>
+            <ModalText closeMap={closeMap} open={openMap} setOpen={setOpenMap} start={start} startLoc={startLoc} end={end} endLoc={endLoc}/>
         </div>
     )
 }
