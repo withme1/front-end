@@ -4,6 +4,7 @@ import { css } from '@emotion/react';
 import { Button } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal/lib/components/Modal';
+import { getMiddleLoc } from '../util/getMiddleLoc';
 
 const mapButtonSytle = {
     color: 'white',
@@ -29,10 +30,6 @@ function ChatMapInfo({ room }) {
             setTimeout(() => waitModalRender(cb), 0);
         else
             cb();
-    }
-
-    const getMiddleLoc = (l1, l2) => {
-        return {latitude: (l1.latitude + l2.latitude) / 2, longitude: (l1.longitude + l2.longitude) / 2};
     }
 
     const clickHandler = (e) => {
