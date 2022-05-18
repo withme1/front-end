@@ -45,15 +45,7 @@ function ModalText({ text, loc }) {
                 position: new kakao.maps.LatLng(loc.latitude, loc.longitude)
             });
             marker.setMap(map);
-
-            //마커 텍스트 생성
-            // const markerTextDiv = `<div style="padding:5px; color:black;">${text}</div>`;
-            // const infowindow = new kakao.maps.InfoWindow({
-            //     position : new kakao.maps.LatLng(loc.latitude, loc.longitude),
-            //     content : markerTextDiv
-            // });
-            // infowindow.open(map, marker); 
-
+            
             const customOverlay = new kakao.maps.CustomOverlay({
                 map: map,
                 position: new kakao.maps.LatLng(loc.latitude, loc.longitude),

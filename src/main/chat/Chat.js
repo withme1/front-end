@@ -5,6 +5,7 @@ import ChatView from './ChatView';
 import { getSocket } from '../../socket/socket'
 import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
+import ChatRoomInfo from './ChatRoomInfo';
 
 const chatStyle = css`
   height: calc(100% - 8px);
@@ -43,20 +44,6 @@ const sendButtonStyle = {
   }
 };
 
-const leaveButtonStyle = {
-  boxShadow: "0 0 0",
-  backgroundColor: "#ff5b5b",
-  padding: "0px",
-  fontSize: '0.8em',
-  width: '55px',
-  minWidth: '55px',
-
-  "&:hover": {
-    boxShadow: "0 0 0",
-    backgroundColor: "#ff5b5b"
-  }
-};
-
 const checkMessage = (m) => {
   if (m === '')
     return false;
@@ -75,15 +62,6 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
       getSocket().emit('sendMessageReq', { message: message, time: dayjs().format('HH:mm:ss') });
   }
 
-  const leaveHandler = (e) => {
-    if (!isInRoom)
-      return;
-    if (isHost)
-      getSocket().emit('deleteRoomReq');
-    else
-      getSocket().emit('quitRoomReq');
-  }
-
   useEffect(() => {
     getSocket().removeAllListeners("sendMessageRes");
     getSocket().on('sendMessageRes', (res) => {
@@ -100,28 +78,9 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
     })
   }, [])
 
-  const RoomInfo = () => {
-    const room = roomList.find(room => room.id === roomId);
-    if (isInRoom) {
-      return (
-        <div css={css`height: 25px; display: flex; justify-content: space-evenly; padding-bottom: 3px;`}>
-          <div css={css`border: 1px solid black`}>
-            {room.time.format('HH:mm')}
-          </div>
-          <div css={css`border: 1px solid black`}>
-            지도 보기
-          </div>
-          <Button variant="contained" sx={leaveButtonStyle} onClick={leaveHandler}>{isHost ? '방 삭제' : '방 퇴장'}</Button>
-        </div>
-      )
-    } else {
-      return <></>
-    }
-  }
-
   return (
     <div css={chatStyle}>
-      <RoomInfo />
+      { isInRoom ? <ChatRoomInfo room={roomList.find(room => room.id === roomId)} isInRoom={isInRoom} isHost={isHost}/> : <></>}
       <ChatView chatList={chatList} setChatList={setChatList} chatStyleRef={chatStyleRef} />
       <form css={css`display:flex;height:30px;`} onSubmit={chatHandler}>
         <TextField autoComplete='off' sx={textFieldStyle} value={message} onChange={(e) => setMessage(e.target.value)} />

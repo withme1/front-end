@@ -97,9 +97,9 @@ function CreateRoom({ rejoin, setRejoin, setRoomList, remake, setRemake, open, s
                 addRoom({
                     id: parseInt(room.id),
                     start: room.SrcText,
-                    startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
+                    startLoc: { latitude: parseFloat(room.SrcLatitude), longitude: parseFloat(room.SrcLongitude) },
                     end: room.DestText,
-                    endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                    endLoc: { latitude: parseFloat(room.DestLatitude), longitude: parseFloat(room.DestLongitude) },
                     date: dayjs(room.date),
                     time: dayjs('2020-01-01 ' + room.time)
                 });

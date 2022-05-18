@@ -32,7 +32,6 @@ function CreateTime({ day, time, setTime, textStyle}) {
     })
 
     const changeHandler = (t) => {
-        console.log(t)
         setTime(t);
         setValidStyle(getValidStyle(day, t));
     }

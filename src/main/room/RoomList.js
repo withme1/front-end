@@ -76,7 +76,6 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
     const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
 
     const getSortedList = (roomList) => {
-        console.log(roomId)
         return [...roomList.filter(room => room.id === roomId), ...roomList.filter(room => room.id !== roomId).sort((a, b) => {
             if (sortBy === 'start') {
                 return getDistance(a.startLoc.latitude, a.startLoc.longitude, sortLoc.latitude, sortLoc.longitude) - getDistance(b.startLoc.latitude, b.startLoc.longitude, sortLoc.latitude, sortLoc.longitude)
@@ -116,11 +115,11 @@ function RoomList({ fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, r
         getSocket().removeAllListeners('roomCreated');
         getSocket().on('roomCreated', (room) => {
             addRoom({
-                id: room.id,
+                id: parseInt(room.id),
                 start: room.SrcText,
                 end: room.DestText,
-                startLoc: { latitude: room.SrcLatitude, longitude: room.SrcLongitude },
-                endLoc: { latitude: room.DestLatitude, longitude: room.DestLongitude },
+                startLoc: { latitude: parseFloat(room.SrcLatitude), longitude: parseFloat(room.SrcLongitude) },
+                endLoc: { latitude: parseFloat(room.DestLatitude), longitude: parseFloat(room.DestLongitude) },
                 date: dayjs(room.date),
                 time: dayjs('2020-01-01 ' + room.time)
             })

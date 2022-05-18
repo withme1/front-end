@@ -39,7 +39,6 @@ function CreateDate({ day, setDay, textStyle}) {
     })
 
     const changeHandler = (v) => {
-        console.log(v)
         setDay(v);
         setValidStyle(getValidStyle(v));
     }
