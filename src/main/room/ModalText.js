@@ -3,6 +3,8 @@
 import { css } from '@emotion/react';
 import { useState, useRef } from "react";
 import Modal from "react-modal/lib/components/Modal"
+import { getDistance } from '../util/getDistance';
+import { getLevelByDisance } from '../util/getLevelByDistance';
 import { getMiddleLoc } from '../util/getMiddleLoc';
 
 const modalStyle = {
@@ -40,7 +42,7 @@ function ModalText({ start, startLoc, end, endLoc }) {
             const middleLoc = getMiddleLoc(startLoc, endLoc);
             const options = { //지도를 생성할 때 필요한 기본 옵션
                 center: new kakao.maps.LatLng(middleLoc.latitude, middleLoc.longitude), //지도의 중심좌표.
-                level: 3 //지도의 레벨(확대, 축소 정도)
+                level: getLevelByDisance(getDistance(startLoc.latitude, startLoc.longitude, endLoc.latitude, endLoc.longitude)*1000) //지도의 레벨(확대, 축소 정도)
             };
 
             const map = new kakao.maps.Map(mapRef.current, options); //지도 생성 및 객체 리턴
