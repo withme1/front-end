@@ -12,24 +12,7 @@ import SortRoom from './sort/SortRoom';
 import { getDistance } from '../util/getDistance';
 import { getSocket } from '../../socket/socket';
 import dayjs from 'dayjs';
-
-const roomListStyle = css`
-    flex-grow: 1;
-
-    height: calc(100vh - 90px);
-    padding: 3px;
-    
-    overflow: auto;
-    &::-webkit-scrollbar {
-        width: 10px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #2BAE66;
-    }
-    &::-webkit-scrollbar-track {
-        background-color: #DCEDC8;
-    }
-`;
+import { useMediaQuery } from 'react-responsive';
 
 const listItemStyle = css`
     padding: 2px;
@@ -56,18 +39,6 @@ const openSortButtonStyle = {
     color: "#2BAE66",
     backgroundColor: "white"
 };
-
-const noRoomStyle = css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    flex-grow: 1;
-
-    height: calc(100vh - 90px);
-
-    font-size: 4em;
-`;
 
 function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake, setRemake, roomList, setRoomList, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, addMessage }) {
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
@@ -182,6 +153,36 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
         })
     }, [])
 
+    const isPC = useMediaQuery({query : "(min-width: 700px)"});
+    const roomListStyle = css`
+        flex-grow: 1;
+
+        height: calc(var(--vh, 1vh) * 100 - 87px${isPC ? '' : ' - 12px'});
+        padding: 3px;
+
+        overflow: auto;
+        &::-webkit-scrollbar {
+            width: 10px;
+        }
+        &::-webkit-scrollbar-thumb {
+            background-color: #2BAE66;
+        }
+        &::-webkit-scrollbar-track {
+            background-color: #DCEDC8;
+        }
+    `;
+
+    const noRoomStyle = css`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        flex-grow: 1;
+
+        height: calc(var(--vh, 1vh) * 100 - 90px${isPC ? '' : ' - 12px'});
+
+        font-size: 4em;
+    `;
 
     return (
         <>
@@ -190,7 +191,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                 : <List
                     css={roomListStyle}
                 >
-                    {roomList.filter((room) => !fullIds.has(room.id)).map((data) => {
+                    {roomList.filter((room) => room.id === roomId || !fullIds.has(room.id)).map((data) => {
                         return (
                             <ListItem key={data.id} css={listItemStyle} >
                                 {data.id === roomId

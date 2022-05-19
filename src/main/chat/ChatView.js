@@ -7,6 +7,7 @@ import SystemChat from './type/SystemChat';
 
 const viewStyle = css`
   flex-grow: 1;
+  height: 100%;
   border: 1px solid #2BAE66;
   border-radius: 5px;
   overflow-y: scroll;
@@ -23,12 +24,12 @@ const viewStyle = css`
 
 function ChatView({chatList, setChatList, chatStyleRef}) {
     return (
-        <div css={[viewStyle]} ref={chatStyleRef}>
+        <div css={viewStyle} ref={chatStyleRef}>
             {chatList.map((chat, i) => {
                 if (chat.type === 'me')
                     return <MyChat text={chat.text} time={chat.time} key={i} />
                 else if (chat.type === 'other')
-                    return <OtherChat text={chat.text} time={chat.time} key={i} />
+                    return <OtherChat  text={chat.text} time={chat.time} key={i} />
                 else if (chat.type === 'system')
                     return <SystemChat text={chat.text} time={chat.time} key={i} />
                 return null;

@@ -17,6 +17,7 @@ const buttonStyle = css`
 function EnterButton({ roomId, setRejoin, enterId, isInRoom, isHost }) {
   const clickHandler = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     if (enterId === roomId) {
       window.alert('이미 들어간 방입니다.');
       return;
@@ -27,9 +28,9 @@ function EnterButton({ roomId, setRejoin, enterId, isInRoom, isHost }) {
     }
     let message;
     if (isHost)
-      message = '기존 방을 삭제하시겠습니까?';
+      message = '기존 방은 삭제하시겠습니까?';
     else
-      message = '기존 방에서 퇴장하시겠습니까?';
+      message = '기존 방에서는 퇴장하시겠습니까?';
     if (window.confirm(message)) {
       if (isHost) {
         getSocket().emit('deleteRoomReq');

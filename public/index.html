@@ -1,28 +1,44 @@
 <!DOCTYPE html>
-<html lang="ko" style="background-color: #FCF6F5">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="택시 동승자를 쉽고 편리하게 찾을 수 있는 웹사이트"
-    />
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8e595c1668724d6da97d5501b0c136e3"></script>
-    <title>WITHME</title>
-    <style>
-      .css-92nr1f-MuiButtonBase-root-MuiIconButton-root, .css-1s220mh-MuiButtonBase-root-MuiIconButton-root, .css-12ha4i7, .css-a1rc6s, .css-7lip4c {
-        background-color: #2BAE66 !important;
-      }
-      .css-118whkv {
-        background-color: #2BAE66 !important; border-color: #2BAE66 !important;
-      }
-      .css-2ujp1m {
-        border-color: #2BAE66 !important;
-      }
-    </style>
-  </head>
-  <body style="margin: 0px;">
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-  </body>
+<html lang="ko" style="background-color: #FCF6F5;">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="택시 동승자를 쉽고 편리하게 찾을 수 있는 웹사이트" />
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8e595c1668724d6da97d5501b0c136e3"></script>
+  <title>WITHME</title>
+  <style>
+    .css-92nr1f-MuiButtonBase-root-MuiIconButton-root,
+    .css-1s220mh-MuiButtonBase-root-MuiIconButton-root,
+    .css-12ha4i7,
+    .css-a1rc6s,
+    .css-7lip4c {
+      background-color: #2BAE66 !important;
+    }
+
+    .css-118whkv {
+      background-color: #2BAE66 !important;
+      border-color: #2BAE66 !important;
+    }
+
+    .css-2ujp1m {
+      border-color: #2BAE66 !important;
+    }
+  </style>
+  <script>
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty("--vh", `${vh}px`);
+
+    window.addEventListener("resize", () => {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty("--vh", `${vh}px`);
+    });
+  </script>
+</head>
+
+<body style="margin: 0px;">
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+</body>
+
 </html>

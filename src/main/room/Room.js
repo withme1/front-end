@@ -32,8 +32,8 @@ function Room({ setRejoin, roomData, isInRoom, setIsInRoom, isHost, setIsHost, r
     }
 
     const clickHandler = () => {
-        if (!openMap){
-            setOpenMap(true)
+        if (!openMap) {
+            setOpenMap(true);
         }
     }
 
@@ -41,7 +41,7 @@ function Room({ setRejoin, roomData, isInRoom, setIsInRoom, isHost, setIsHost, r
         <div css={roomStyle} onClick={clickHandler}>
             <StartTime time={roomData.time} />
             <Start2End closeMap={closeMap} openMap={openMap} setOpenMap={setOpenMap} start={roomData.start} startLoc={roomData.startLoc} end={roomData.end} endLoc={roomData.endLoc} />
-            <EnterButton roomId={roomId} setRejoin={setRejoin} enterId={roomData.id} isInRoom={isInRoom} isHost={isHost}/>
+            <EnterButton roomId={roomId} setRejoin={setRejoin} enterId={roomData.id} isInRoom={isInRoom} isHost={isHost} />
         </div>
     )
 }

@@ -19,10 +19,10 @@ dayjs.locale('ko');
 
 const modalStyle = {
     content: {
-        top: '10vh',
+        top: 'calc(var(--vh, 1vh) * 10)',
         left: 'calc(50vw - 160px)',
         right: 'calc(50vw - 160px)',
-        bottom: '10vh',
+        bottom: 'calc(var(--vh, 1vh) * 10)',
         borderRadius: "5px",
         border: "1px solid #2BAE66"
     }
@@ -200,9 +200,9 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
         if (isInRoom) {
             let message;
             if (isHost)
-                message = "기존 방을 삭제하시겠습니까?";
+                message = "방을 재생성하시겠습니까?";
             else
-                message = "기존 방에서 나가시겠습니까?";
+                message = "기존 방에서는 퇴장하시겠습니까?";
             if (window.confirm(message)) {
                 if (isHost) {
                     getSocket().emit('deleteRoomReq');

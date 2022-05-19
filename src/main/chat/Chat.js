@@ -6,43 +6,15 @@ import { getSocket } from '../../socket/socket'
 import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import ChatRoomInfo from './ChatRoomInfo';
+import { useMediaQuery } from 'react-responsive';
 
 const chatStyle = css`
-  height: calc(100% - 8px);
-  margin: 3px;
+  height: 100%;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
 `;
-
-const textFieldStyle = {
-  flexGrow: '1',
-  '.MuiOutlinedInput-root input': {
-    padding: "5px;",
-    fontSize: '0.8em',
-    height: '20px',
-  },
-  '.MuiOutlinedInput-root fieldset': {
-    borderColor: 'green',
-  },
-  '.MuiOutlinedInput-root.Mui-focused fieldset': {
-    borderColor: 'green',
-  }
-};
-
-const sendButtonStyle = {
-  boxShadow: "0 0 0",
-  backgroundColor: "#2BAE66",
-  padding: "0px",
-  fontSize: '0.8em',
-  width: '55px',
-  minWidth: '55px',
-
-  "&:hover": {
-    boxShadow: "0 0 0",
-    backgroundColor: "#2BAE66"
-  }
-};
 
 const checkMessage = (m) => {
   if (m === '')
@@ -78,11 +50,46 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
     })
   }, [])
 
+  const isPC = useMediaQuery({query : "(min-width: 700px)"});
+
+  const textFieldStyle = {
+    flexGrow: '1',
+    '.MuiOutlinedInput-root': {
+      height: '100%'
+    },
+    '.MuiOutlinedInput-root input': {
+      padding: "5px;",
+      fontSize: '1.3em',
+      height: '100%',
+    },
+    '.MuiOutlinedInput-root fieldset': {
+      borderColor: 'green',
+    },
+    '.MuiOutlinedInput-root.Mui-focused fieldset': {
+      borderColor: 'green',
+    }
+  };
+  
+  const sendButtonStyle = {
+    boxShadow: "0 0 0",
+    backgroundColor: "#2BAE66",
+    padding: "0px",
+    fontSize: '0.8em',
+    width: isPC ? '45px' : '80px',
+    
+    minWidth: 'none',
+  
+    "&:hover": {
+      boxShadow: "0 0 0",
+      backgroundColor: "#2BAE66"
+    }
+  };
+
   return (
     <div css={chatStyle}>
       { isInRoom ? <ChatRoomInfo room={roomList.find(room => room.id === roomId)} isInRoom={isInRoom} isHost={isHost}/> : <></>}
       <ChatView chatList={chatList} setChatList={setChatList} chatStyleRef={chatStyleRef} />
-      <form css={css`display:flex;height:30px;`} onSubmit={chatHandler}>
+      <form css={css`display: flex; height: ${isPC ? '30px' : '40px'};`} onSubmit={chatHandler}>
         <TextField autoComplete='off' sx={textFieldStyle} value={message} onChange={(e) => setMessage(e.target.value)} />
         <Button variant="contained" sx={sendButtonStyle} onClick={chatHandler}>보내기</Button>
       </form>

@@ -7,21 +7,7 @@ import Modal from 'react-modal/lib/components/Modal';
 import { getDistance } from '../util/getDistance';
 import { getLevelByDisance } from '../util/getLevelByDistance';
 import { getMiddleLoc } from '../util/getMiddleLoc';
-
-const mapButtonSytle = {
-    color: 'white',
-    boxShadow: "0 0 0",
-    backgroundColor: "#2BAE66",
-    padding: "0px",
-    fontSize: '0.8em',
-    width: '55px',
-    minWidth: '55px',
-
-    "&:hover": {
-        boxShadow: "0 0 0",
-        backgroundColor: "#2BAE66"
-    }
-};
+import { useMediaQuery } from 'react-responsive';
 
 function ChatMapInfo({ room }) {
     const [open, setOpen] = useState(false);
@@ -36,14 +22,14 @@ function ChatMapInfo({ room }) {
 
     const clickHandler = (e) => {
         setOpen(true);
-        
+
         waitModalRender(() => {
             const startLoc = room.startLoc;
             const endLoc = room.endLoc;
             const middleLoc = getMiddleLoc(startLoc, endLoc);
             const options = { //지도를 생성할 때 필요한 기본 옵션
                 center: new kakao.maps.LatLng(middleLoc.latitude, middleLoc.longitude), //지도의 중심좌표.
-                level: getLevelByDisance(getDistance(startLoc.latitude, startLoc.longitude, endLoc.latitude, endLoc.longitude)*1000) //지도의 레벨(확대, 축소 정도)
+                level: getLevelByDisance(getDistance(startLoc.latitude, startLoc.longitude, endLoc.latitude, endLoc.longitude) * 1000) //지도의 레벨(확대, 축소 정도)
             };
 
             const map = new kakao.maps.Map(mapRef.current, options); //지도 생성 및 객체 리턴
@@ -74,11 +60,28 @@ function ChatMapInfo({ room }) {
         })
     }
 
+    const isPC = useMediaQuery({ query: "(min-width: 700px)" });
+
+    const mapButtonSytle = {
+        color: 'white',
+        boxShadow: "0 0 0",
+        backgroundColor: "#2BAE66",
+        padding: "0px",
+        fontSize: '0.8em',
+        width: isPC ? '55px' : '80px',
+        minWidth: '55px',
+
+        "&:hover": {
+            boxShadow: "0 0 0",
+            backgroundColor: "#2BAE66"
+        }
+    };
+
     return (
         <>
             <Button sx={mapButtonSytle} onClick={clickHandler}>위치</Button>
             <Modal
-                style={{overlay: {zIndex: 2000}}}
+                style={{ overlay: { zIndex: 2000 } }}
                 isOpen={open}
                 onRequestClose={() => setOpen(false)}
                 ariaHideApp={false}

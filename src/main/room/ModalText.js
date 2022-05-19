@@ -12,10 +12,10 @@ const modalStyle = {
         zIndex: 2000
     },
     content: {
-        top: '10vh',
+        top: 'calc(var(--vh, 1vh) * 10)',
         left: '10vw',
         right: '10vw',
-        bottom: '10vh'
+        bottom: 'calc(var(--vh, 1vh) * 10)'
       }
 };
 
@@ -33,44 +33,6 @@ const clickStyle = css`
 
 function ModalText({ closeMap, open, setOpen, start, startLoc, end, endLoc }) {
     const mapRef = useRef(null);
-
-    // const clickHandler = (e) => {
-    //     e.preventDefault();
-    //     setOpen(true);
-    //     waitModalRender(() => {
-    //         const middleLoc = getMiddleLoc(startLoc, endLoc);
-    //         const options = { //지도를 생성할 때 필요한 기본 옵션
-    //             center: new kakao.maps.LatLng(middleLoc.latitude, middleLoc.longitude), //지도의 중심좌표.
-    //             level: getLevelByDisance(getDistance(startLoc.latitude, startLoc.longitude, endLoc.latitude, endLoc.longitude)*1000) //지도의 레벨(확대, 축소 정도)
-    //         };
-
-    //         const map = new kakao.maps.Map(mapRef.current, options); //지도 생성 및 객체 리턴
-
-    //         //마커 생성
-    //         const startMarker = new kakao.maps.Marker({
-    //             position: new kakao.maps.LatLng(startLoc.latitude, startLoc.longitude)
-    //         });
-    //         startMarker.setMap(map);
-
-    //         const startCustomOverlay = new kakao.maps.CustomOverlay({
-    //             map: map,
-    //             position: new kakao.maps.LatLng(startLoc.latitude, startLoc.longitude),
-    //             content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">출발: ${start}</div>`,
-    //         });
-
-    //         //마커 생성
-    //         const endMarker = new kakao.maps.Marker({
-    //             position: new kakao.maps.LatLng(endLoc.latitude, endLoc.longitude)
-    //         });
-    //         endMarker.setMap(map);
-
-    //         const customOverlay = new kakao.maps.CustomOverlay({
-    //             map: map,
-    //             position: new kakao.maps.LatLng(endLoc.latitude, endLoc.longitude),
-    //             content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">출발: ${start}</div>`,
-    //         });
-    //     })
-    // }
 
     const waitModalRender = (cb) => {
         if (mapRef.current === null)

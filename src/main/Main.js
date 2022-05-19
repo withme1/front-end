@@ -7,11 +7,6 @@ import RoomList from './room/RoomList';
 import { getSocket } from '../socket/socket';
 import { useMediaQuery } from 'react-responsive';
 
-const mainStyle = css`
-    display: flex;
-    align-items: stretch;
-`;
-
 function Main() {
     const [roomList, setRoomList] = useState([]);
     const [isInRoom, setIsInRoom] = useState(false);
@@ -67,13 +62,23 @@ function Main() {
 
     const isPC = useMediaQuery({query : "(min-width: 700px)"});
 
+    const mainStyle = css`
+        display: flex;
+        flex-direction: ${isPC ? 'row' : 'column'};
+        align-items: stretch;
+    `;
+
     return (
         <div className="main" css={mainStyle}>
             {isPC
                 ? <ComputerChat roomList={roomList} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
-                : <MobileChat roomList={roomList} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+                : <></>
             }
             <RoomList clearMessage={clearMessage} fullIds={fullIds} setFullIds={setFullIds} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} roomList={roomList} setRoomList={setRoomList} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} addMessage={addMessage} />
+            {isPC
+                ? <></>
+                : <MobileChat roomList={roomList} rejoin={rejoin} setRejoin={setRejoin} remake={remake} setRemake={setRemake} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} chatList={chatList} setChatList={setChatList} addMessage={addMessage} setRoomList={setRoomList} chatStyleRef={chatStyleRef} />
+            }
         </div>
     )
 }
