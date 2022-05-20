@@ -80,7 +80,7 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
     const [end, setEnd] = useState("");
     const [endLoc, setEndLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
     const [endActivate, setEndActivate] = useState(false);
-    const [startDay, setStartDay] = useState(dayjs());
+    const [startDay, setStartDay] = useState(dayjs().hour() === 23 ? dayjs().add(1, 'day') : dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
 
     const requestCreateRoom = () => {
