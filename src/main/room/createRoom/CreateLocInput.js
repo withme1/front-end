@@ -31,7 +31,7 @@ function CreateLocInput({ label, textStyle, text, setText, loc, setLoc, activate
     });
 
     const changeHandler = (e) => {
-        const value = e.target.value;
+        const value = e.target.value.trim();
         setText(value);
         setTextValidStyle(getValidStyle(value));
     }
