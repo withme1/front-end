@@ -59,7 +59,7 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
     },
     '.MuiOutlinedInput-root input': {
       padding: "5px;",
-      fontSize: '1.3em',
+      fontSize: isPC ? '1em' : '1.3em',
       height: '100%',
     },
     '.MuiOutlinedInput-root fieldset': {
