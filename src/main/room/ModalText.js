@@ -75,7 +75,7 @@ function ModalText({ closeMap, open, setOpen, start, startLoc, end, endLoc }) {
             const customOverlay = new kakao.maps.CustomOverlay({
                 map: map,
                 position: new kakao.maps.LatLng(endLoc.latitude, endLoc.longitude),
-                content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">도착: ${start}</div>`,
+                content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">도착: ${end}</div>`,
             });
         })
     }
