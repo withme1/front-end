@@ -25,6 +25,9 @@ const mapStyle = css`
 
 const clickStyle = css`
     color: #FCF6F5;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     text-decoration: none;
     &:visited {
         color: #FCF6F5;
@@ -72,7 +75,7 @@ function ModalText({ closeMap, open, setOpen, start, startLoc, end, endLoc }) {
             const customOverlay = new kakao.maps.CustomOverlay({
                 map: map,
                 position: new kakao.maps.LatLng(endLoc.latitude, endLoc.longitude),
-                content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">출발: ${start}</div>`,
+                content: `<div style="padding:3px;position: relative;bottom:55px;color:black;background-color:white;border-radius:5px;border:1px solid black">도착: ${start}</div>`,
             });
         })
     }
@@ -80,7 +83,12 @@ function ModalText({ closeMap, open, setOpen, start, startLoc, end, endLoc }) {
     return (
         <>
             <div css={clickStyle}>
-                {`${start} → ${end}`}
+                <div css={css`display: inline-block; display:flex; align-items: center`}>
+                    {start}
+                </div>
+                <div css={css`display: inline-block; display:flex; align-items: center`}>
+                    {`\u00A0→\u00A0${end}`}
+                </div>
             </div>
             <Modal
                 style={modalStyle}
