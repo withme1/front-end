@@ -31,7 +31,7 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
       return;
 
     if (checkMessage(message))
-      getSocket().emit('sendMessageReq', { message: message, time: dayjs().format('HH:mm:ss') });
+      getSocket().emit('sendMessageReq', { message: message.trim(), time: dayjs().format('HH:mm:ss') });
   }
 
   useEffect(() => {
@@ -90,7 +90,7 @@ function Chat({ roomList, remake, setRemake, isInRoom, setIsInRoom, isHost, setI
       { isInRoom ? <ChatRoomInfo room={roomList.find(room => room.id === roomId)} isInRoom={isInRoom} isHost={isHost}/> : <></>}
       <ChatView chatList={chatList} setChatList={setChatList} chatStyleRef={chatStyleRef} />
       <form css={css`display: flex; height: ${isPC ? '30px' : '40px'};`} onSubmit={chatHandler}>
-        <TextField autoComplete='off' sx={textFieldStyle} value={message} onChange={(e) => setMessage(e.target.value.trim())} />
+        <TextField autoComplete='off' sx={textFieldStyle} value={message} onChange={(e) => setMessage(e.target.value)} />
         <Button variant="contained" sx={sendButtonStyle} onClick={chatHandler}>보내기</Button>
       </form>
     </div>
