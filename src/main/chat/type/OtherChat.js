@@ -29,7 +29,7 @@ function OtherChat({ text, time }) {
         <div css={itemStyle}>
           {text}
         </div>
-        <div css={css`display:flex; flex-direction:row-reverse; font-size:${isPC ? '0.3' : '0.6'}em`}>
+        <div css={css`display:flex; flex-direction:row; font-size:${isPC ? '0.3' : '0.6'}em`}>
           {time.format('A hh:mm')}
         </div>
       </div>
