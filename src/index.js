@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import io from 'socket.io-client'
 import { setSocket } from './socket/socket';
 
-const socket = io.connect('http://211.229.250.42:25030/', {transports: ['websocket']})
+const socket = io.connect('http://101.101.208.190:80/', {transports: ['websocket']})
 setSocket(socket);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
