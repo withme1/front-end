@@ -89,3 +89,38 @@ To create a production build, use npm run build.
 
 webpack compiled successfully
 Compiling...
+Compiled with warnings.
+
+src/main/room/createRoom/CreateRoom.js
+  Line 122:8:  React Hook useEffect has missing dependencies: 'addMessage', 'addRoom', 'clearMessage', 'setIsHost', 'setIsInRoom', and 'setRoomId'. Either include them or remove the dependency array. If 'clearMessage' changes too often, find the parent component that defines it and wrap that definition in useCallback               react-hooks/exhaustive-deps
+  Line 177:8:  React Hook useEffect has missing dependencies: 'addMessage', 'setIsHost', 'setIsInRoom', 'setRejoin', 'setRemake', 'setRoomId', and 'setRoomList'. Either include them or remove the dependency array. If 'setRoomList' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+WARNING in src/main/room/createRoom/CreateRoom.js
+  Line 122:8:  React Hook useEffect has missing dependencies: 'addMessage', 'addRoom', 'clearMessage', 'setIsHost', 'setIsInRoom', and 'setRoomId'. Either include them or remove the dependency array. If 'clearMessage' changes too often, find the parent component that defines it and wrap that definition in useCallback               react-hooks/exhaustive-deps
+  Line 177:8:  React Hook useEffect has missing dependencies: 'addMessage', 'setIsHost', 'setIsInRoom', 'setRejoin', 'setRemake', 'setRoomId', and 'setRoomList'. Either include them or remove the dependency array. If 'setRoomList' changes too often, find the parent component that defines it and wrap that definition in useCallback  react-hooks/exhaustive-deps
+
+webpack compiled with 1 warning
+The build failed because the process exited too early. This probably means the system ran out of memory or someone called `kill -9` on the process.
+
+> withme@0.1.0 start
+> PORT=80 react-scripts start
+
+(node:708153) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:708153) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled successfully!
+
+You can now view withme in the browser.
+
+  Local:            http://localhost:80
+  On Your Network:  http://192.168.1.7:80
+
+Note that the development build is not optimized.
+To create a production build, use npm run build.
+
+webpack compiled successfully
