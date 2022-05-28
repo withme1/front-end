@@ -5,6 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import io from 'socket.io-client'
 import { setSocket } from './socket/socket';
 
+//socket connect
 const socket = io.connect('http://101.101.208.190:80/', {transports: ['websocket']})
 setSocket(socket);
 
@@ -13,7 +14,7 @@ root.render(
     <App />
 );
 
-// If you want to start measuring performance in your app, pass a function
+// If you want to start measuring performance in your aWpp, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
