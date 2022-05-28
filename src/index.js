@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import { setSocket } from './socket/socket';
 
 //socket connect
-const socket = io.connect('https://101.101.208.190/', {transports: ['websocket']})
+const socket = io.connect('https://101.101.208.190/', {secure: true})
 setSocket(socket);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
