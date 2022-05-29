@@ -48,6 +48,11 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
     const [openCreateButton, setOpenCreateButton] = useState(true);
     const [openSortButton, setOpenSortButton] = useState(true);
 
+    const [start, setStart] = useState("");
+    const [startLoc, setStartLoc] = useState({ latitude: 0, longitude: 0 });
+    const [end, setEnd] = useState("");
+    const [endLoc, setEndLoc] = useState({ latitude: 0, longitude: 0 });
+
     const getSortedList = (roomList) => {
         return [...roomList.filter(room => room.id === roomId), ...roomList.filter(room => room.id !== roomId).sort((a, b) => {
             if (sortBy === 'start') {
@@ -70,23 +75,57 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
     const sortRoomClickHandler = (e) => {
         e.preventDefault();
-        setOpenCreateButton(false);
-        setOpenSortButton(false);
-        setOpenSort(true);
+        if (startLoc.latitude === 0 && endLoc === 0) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                setStartLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setEndLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setSortLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setOpenCreateButton(false);
+                setOpenSortButton(false);
+                setOpenSort(true);
+            }, (e) => {
+                alert('위치 권한을 설정해주세요')
+            })
+        } else {
+            setOpenCreateButton(false);
+            setOpenSortButton(false);
+            setOpenSort(true);
+        }
     }
 
     const createRoomClickHandler = (e) => {
         e.preventDefault();
-        setOpenCreateButton(false);
-        setOpenSortButton(false);
-        setOpenCreateRoom(true);
+        if (startLoc.latitude === 0 && endLoc === 0) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                setStartLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setEndLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setSortLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
+                setOpenCreateButton(false);
+                setOpenSortButton(false);
+                setOpenCreateRoom(true);
+            }, (e) => {
+                alert('위치 권한을 설정해주세요')
+            })
+        } else {
+            setOpenCreateButton(false);
+            setOpenSortButton(false);
+            setOpenCreateRoom(true);
+        }
     }
 
     useEffect(() => {
-        if (navigator.geolocation && sortLoc.latitude === 0 && sortLoc.longitude === 0) {
+        if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                setSortLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
-            }, (e) => {});
+                if (startLoc.latitude === 0 && startLoc.longitude === 0) {
+                    setStartLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+                }
+                if (endLoc.latitude === 0 && endLoc.longitude === 0) {
+                    setEndLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+                }
+                if (sortLoc.latitude === 0 && sortLoc.longitude === 0) {
+                    setSortLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+                }
+            }, (e) => { });
         }
     }, [])
 
@@ -159,7 +198,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
         })
     }, [])
 
-    const isPC = useMediaQuery({query : "(min-width: 700px)"});
+    const isPC = useMediaQuery({ query: "(min-width: 700px)" });
     const roomListStyle = css`
         flex-grow: 1;
 
@@ -215,14 +254,14 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                 </Fab>
                 : <></>
             }
-                <SortRoom setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc} />
+            <SortRoom setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} open={openSort} setOpen={setOpenSort} sortBy={sortBy} setSortBy={setSortBy} sortLoc={sortLoc} setSortLoc={setSortLoc} />
             {openCreateButton
                 ? <Fab style={createRoomButtonStyle} onClick={createRoomClickHandler}>
                     <AddIcon />
-                  </Fab>
+                </Fab>
                 : <></>
             }
-            <CreateRoom setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} clearMessage={clearMessage} rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage} />
+            <CreateRoom start={start} setStart={setStart} end={end} setEnd={setEnd} startLoc={startLoc} setStartLoc={setStartLoc} endLoc={endLoc} setEndLoc={setEndLoc} setOpenCreateButton={setOpenCreateButton} setOpenSortButton={setOpenSortButton} clearMessage={clearMessage} rejoin={rejoin} setRejoin={setRejoin} setRoomList={setRoomList} remake={remake} setRemake={setRemake} open={openCreateRoom} setOpen={setOpenCreateRoom} addRoom={addRoom} isInRoom={isInRoom} setIsInRoom={setIsInRoom} isHost={isHost} setIsHost={setIsHost} roomId={roomId} setRoomId={setRoomId} deleteRoom={deleteRoom} addMessage={addMessage} />
         </>
     )
 }

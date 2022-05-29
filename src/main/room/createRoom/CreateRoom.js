@@ -73,12 +73,8 @@ const textFieldStyle = {
     }
 };
 
-function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
-    const [start, setStart] = useState("");
-    const [startLoc, setStartLoc] = useState({ latitude: 0, longitude: 0 });
+function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLoc, setEndLoc, setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [startActivate, setStartActivate] = useState(false);
-    const [end, setEnd] = useState("");
-    const [endLoc, setEndLoc] = useState({ latitude: 0, longitude: 0 });
     const [endActivate, setEndActivate] = useState(false);
     const [startDay, setStartDay] = useState(dayjs().hour() === 23 ? dayjs().add(1, 'day') : dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
@@ -95,19 +91,6 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
             time: startTime.format('HH:mm:ss')
         });
     }
-
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                if (startLoc.latitude === 0 && startLoc.longitude === 0) {
-                    setStartLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
-                }
-                if (endLoc.latitude === 0 && endLoc.longitude === 0) {
-                    setEndLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
-                }
-            }, (e) => { });
-        }
-    }, [])
 
     useEffect(() => {
         getSocket().removeAllListeners('createRoomRes');
