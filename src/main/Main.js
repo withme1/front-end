@@ -20,14 +20,13 @@ function Main() {
 
     const addMessage = (m) => {
         setChatList((prev) => [...prev, m]);
-        alert(m)
-        if (m.type === 'system' && m.message === '상대 입장') {
+        if (m.type === 'system' && m.text === '상대 입장') {
             alert(Notification.permission)
             if (Notification.permission !== 'granted') {
                 return
             }
-            const notification = new Notification(m.message, {
-                body: m.message,
+            const notification = new Notification(m.text, {
+                body: m.text,
                 icon: './../img/taxi.png'
             });
             setTimeout(notification.close, 3000);
