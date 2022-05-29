@@ -75,7 +75,8 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
     const sortRoomClickHandler = (e) => {
         e.preventDefault();
-        if (startLoc.latitude === 0 && endLoc === 0) {
+        if (startLoc.latitude === 0 && startLoc.longitude === 0 && endLoc.latitude === 0 && endLoc.longitude === 0 && sortLoc.latitude === 0 && sortLoc.longitude === 0) {
+            alert('위치 권한을 설정해주세요');
             navigator.geolocation.getCurrentPosition((pos) => {
                 setStartLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
                 setEndLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
@@ -84,7 +85,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                 setOpenSortButton(false);
                 setOpenSort(true);
             }, (e) => {
-                alert('위치 권한을 설정해주세요')
+                
             })
         } else {
             setOpenCreateButton(false);
@@ -95,7 +96,8 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
     const createRoomClickHandler = (e) => {
         e.preventDefault();
-        if (startLoc.latitude === 0 && endLoc === 0) {
+        if (startLoc.latitude === 0 && startLoc.longitude === 0 && endLoc.latitude === 0 && endLoc.longitude === 0 && sortLoc.latitude === 0 && sortLoc.longitude === 0) {
+            alert('위치 권한을 설정해주세요');
             navigator.geolocation.getCurrentPosition((pos) => {
                 setStartLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
                 setEndLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude});
@@ -104,7 +106,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
                 setOpenSortButton(false);
                 setOpenCreateRoom(true);
             }, (e) => {
-                alert('위치 권한을 설정해주세요')
+                
             })
         } else {
             setOpenCreateButton(false);
