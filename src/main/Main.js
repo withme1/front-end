@@ -20,6 +20,16 @@ function Main() {
 
     const addMessage = (m) => {
         setChatList((prev) => [...prev, m]);
+        if (m.type !== 'me') {
+            if (Notification.permission !== 'granted') {
+                return
+            }
+            const notification = new Notification("메시지", {
+                body: m.message,
+                icon: '../img/taxi.png'
+            });
+            setTimeout(notification.close, 3000);
+        }
     }
 
     const clearMessage = () => {
