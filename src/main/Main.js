@@ -21,6 +21,7 @@ function Main() {
     const addMessage = (m) => {
         setChatList((prev) => [...prev, m]);
         if (m.type === 'system' && m.message === '상대 입장') {
+            alert(Notification.permission)
             if (Notification.permission !== 'granted') {
                 return
             }
