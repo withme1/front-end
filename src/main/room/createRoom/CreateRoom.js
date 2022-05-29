@@ -75,10 +75,10 @@ const textFieldStyle = {
 
 function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [start, setStart] = useState("");
-    const [startLoc, setStartLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
+    const [startLoc, setStartLoc] = useState({ latitude: 0, longitude: 0 });
     const [startActivate, setStartActivate] = useState(false);
     const [end, setEnd] = useState("");
-    const [endLoc, setEndLoc] = useState({ latitude: 36.769992992548154, longitude: 126.93156290732232 });
+    const [endLoc, setEndLoc] = useState({ latitude: 0, longitude: 0 });
     const [endActivate, setEndActivate] = useState(false);
     const [startDay, setStartDay] = useState(dayjs().hour() === 23 ? dayjs().add(1, 'day') : dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
@@ -95,6 +95,19 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
             time: startTime.format('HH:mm:ss')
         });
     }
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                if (startLoc.latitude === 0 && startLoc.longitude === 0) {
+                    setStartLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+                }
+                if (endLoc.latitude === 0 && endLoc.longitude === 0) {
+                    setEndLoc({ latitude: pos.coords.latitude, longitude: pos.coords.longitude })
+                }
+            }, (e) => { });
+        }
+    }, [])
 
     useEffect(() => {
         getSocket().removeAllListeners('createRoomRes');
@@ -114,7 +127,7 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
                     date: dayjs(room.date),
                     time: dayjs('2020-01-01 ' + room.time)
                 });
-                addMessage({type: 'system', text: '방 생성'});
+                addMessage({ type: 'system', text: '방 생성' });
             } else {
                 alert('createRoomRes error: ' + res.reason);
             }
@@ -125,7 +138,7 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
         getSocket().removeAllListeners('deleteRoomRes');
         getSocket().on('deleteRoomRes', (res) => {
             if (res.ok) {
-                if(remake) {
+                if (remake) {
                     getSocket().emit('createRoomReq', {
                         SrcText: start,
                         DestText: end,
@@ -153,11 +166,11 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
 
         getSocket().removeAllListeners('quitRoomRes');
         getSocket().on('quitRoomRes', (res) => {
-            addMessage({type: 'system', text: '퇴장'});
+            addMessage({ type: 'system', text: '퇴장' });
             setIsInRoom(false);
             setIsHost(false);
             setRoomId(null);
-            if(remake) {
+            if (remake) {
                 getSocket().emit('createRoomReq', {
                     SrcText: start,
                     DestText: end,
@@ -173,7 +186,7 @@ function CreateRoom({ setOpenCreateButton, setOpenSortButton, clearMessage, rejo
                 getSocket().emit('joinRoomReq', rejoin);
                 setRejoin(null);
             }
-        }) 
+        })
     }, [rejoin, remake, start, end, startLoc, endLoc, startDay, startTime])
 
     const isValidInput = () => {

@@ -44,7 +44,7 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
     const [openCreateRoom, setOpenCreateRoom] = useState(false);
     const [openSort, setOpenSort] = useState(false);
     const [sortBy, setSortBy] = useState('start');
-    const [sortLoc, setSortLoc] = useState(() => { return { latitude: 36.76969121081084, longitude: 126.94982606139604 } });
+    const [sortLoc, setSortLoc] = useState(() => { return { latitude: 0, longitude: 0 } });
     const [openCreateButton, setOpenCreateButton] = useState(true);
     const [openSortButton, setOpenSortButton] = useState(true);
 
@@ -83,10 +83,16 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
     }
 
     useEffect(() => {
+        if (navigator.geolocation && sortLoc.latitude === 0 && sortLoc.longitude === 0) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                setSortLoc({latitude: pos.coords.latitude, longitude: pos.coords.longitude})
+            }, (e) => {});
+        }
+    }, [])
+
+    useEffect(() => {
         setRoomList(getSortedList(roomList))
     }, [sortLoc, sortBy])// eslint-disable-line react-hooks/exhaustive-deps
-
-
 
     useEffect(() => {
         getSocket().removeAllListeners('roomCreated');
