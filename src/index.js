@@ -8,7 +8,6 @@ import { setSocket } from './socket/socket';
 //socket connect
 const socket = io.connect('https://withme.p-e.kr', {transports: ['websocket']})
 setSocket(socket);
-Notification.requestPermission();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <App />
