@@ -20,13 +20,13 @@ function Main() {
 
     const addMessage = (m) => {
         setChatList((prev) => [...prev, m]);
-        if (m.type !== 'me') {
+        if (m.type === 'system' && m.message === '상대 입장') {
             if (Notification.permission !== 'granted') {
                 return
             }
-            const notification = new Notification("메시지", {
+            const notification = new Notification(m.message, {
                 body: m.message,
-                icon: '../img/taxi.png'
+                icon: './../img/taxi.png'
             });
             setTimeout(notification.close, 3000);
         }
