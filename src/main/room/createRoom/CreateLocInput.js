@@ -34,7 +34,7 @@ const getColorStyle = (c) => {
     };
 }
 
-function CreateLocInput({ label, startColor, setStartColor, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
+function CreateLocInput({ label, color, setColor, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
     const [textValidStyle, setTextValidStyle] = useState(() => {
         return getValidStyle(text);
     });
@@ -46,7 +46,7 @@ function CreateLocInput({ label, startColor, setStartColor, textStyle, text, set
 
     return (
         <>
-            <TextField sx={[textStyle, getColorStyle(startColor)]} value={text} onChange={changeHandler} id="outlined-basic" label={label} variant="outlined" />
+            <TextField sx={[textStyle, getColorStyle(color)]} value={text} onChange={changeHandler} id="outlined-basic" label={label} variant="outlined" />
             <SelectLoc loc={loc} setLoc={setLoc} text={label} activate={activate} setActivate={setActivate}/>
         </>
     )
