@@ -25,7 +25,7 @@ function OtherChat({ text, time }) {
 
   return (
     <div css={formStyle}>
-      <div css={css`display:flex; flex-direction:column; word-break:break-all;`}>
+      <div css={css`display:flex; flex-direction:column; width: 100%;`}>
         <div css={itemStyle}>
           {text}
         </div>
