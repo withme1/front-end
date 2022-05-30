@@ -14,7 +14,7 @@ function MyChat({ text, time }) {
     
     const itemStyle = css`
         display: inline-block;
-        word-break: break-all;
+        word-break: break-word;
         background-color: #2BAE66;
         border-radius: 13px;
         border-bottom-right-radius: 0px;
@@ -25,7 +25,7 @@ function MyChat({ text, time }) {
 
     return (
         <div css={formStyle}>
-            <div css={css`display:flex; flex-direction:column; word-break:break-all;`}>
+            <div css={css`display:flex; flex-direction:column;`}>
                 <div css={itemStyle}>
                     {text}
                 </div>
