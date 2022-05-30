@@ -58,7 +58,7 @@ function SelectLoc({ loc, setLoc, text, activate, setActivate }) {
     }
     return (
         <>
-            <IconButton sx={{ "svg.MuiSvgIcon-root": { color: activate ? validColor : 'none' } }} size="large" onClick={iconClickHandler}>
+            <IconButton sx={{ "svg.MuiSvgIcon-root": { color: activate ? validColor : 'red' } }} size="large" onClick={iconClickHandler}>
                 <FmdGoodOutlinedIcon fontSize="inherit" />
             </IconButton>
             <Modal

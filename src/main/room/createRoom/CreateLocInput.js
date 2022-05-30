@@ -8,9 +8,7 @@ const validColor = "#2BAE66";
 const getValidStyle = (s) => {
     let colorr = 'none';
 
-    if (s === "")
-        colorr = 'none';
-    else if (checkText(s))
+    if (checkText(s))
         colorr = validColor
     else
         colorr = 'red'
