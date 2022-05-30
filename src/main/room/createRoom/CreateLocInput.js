@@ -23,7 +23,18 @@ const getValidStyle = (s) => {
     };
 }
 
-function CreateLocInput({ label, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
+const getColorStyle = (c) => {
+    return {
+        ".MuiInputLabel-root": {
+            color: c
+        },
+        ".MuiOutlinedInput-root fieldset": {
+            borderColor: c
+        }
+    };
+}
+
+function CreateLocInput({ label, startColor, setStartColor, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
     const [textValidStyle, setTextValidStyle] = useState(() => {
         return getValidStyle(text);
     });
@@ -31,12 +42,11 @@ function CreateLocInput({ label, textStyle, text, setText, loc, setLoc, activate
     const changeHandler = (e) => {
         const value = e.target.value.trim();
         setText(value);
-        setTextValidStyle(getValidStyle(value));
     }
 
     return (
         <>
-            <TextField sx={[textStyle, textValidStyle]} value={text} onChange={changeHandler} id="outlined-basic" label={label} variant="outlined" />
+            <TextField sx={[textStyle, getColorStyle(startColor)]} value={text} onChange={changeHandler} id="outlined-basic" label={label} variant="outlined" />
             <SelectLoc loc={loc} setLoc={setLoc} text={label} activate={activate} setActivate={setActivate}/>
         </>
     )

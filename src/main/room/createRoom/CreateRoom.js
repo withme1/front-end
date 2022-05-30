@@ -74,6 +74,7 @@ const textFieldStyle = {
 };
 
 function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLoc, setEndLoc, setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
+    const [startColor, setStartColor] = useState('none');
     const [startActivate, setStartActivate] = useState(false);
     const [endActivate, setEndActivate] = useState(false);
     const [startDay, setStartDay] = useState(dayjs().hour() === 23 ? dayjs().add(1, 'day') : dayjs());
@@ -91,6 +92,10 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
             time: startTime.format('HH:mm:ss')
         });
     }
+
+    useEffect(() => {
+        setStartColor(checkText(start) ? validColor : 'red');
+    }, [start])
 
     useEffect(() => {
         getSocket().removeAllListeners('createRoomRes');
@@ -172,11 +177,16 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
         })
     }, [rejoin, remake, start, end, startLoc, endLoc, startDay, startTime])
 
-    const isValidInput = () => {
+    const checkValidInput = () => {
+        const r = true;
+        if (!checkText(start)) {
+            r = false;
+            setStartColor = 'red';
+        }
         if (checkText(start) && startLoc !== null && startActivate && endActivate && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
             return true;
         }
-        return false;
+        return r;
     }
 
     const closeModalHandler = () => {
@@ -190,7 +200,7 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
     }
 
     const submitHandler = (e) => {
-        if (!isValidInput()) {
+        if (!checkValidInput()) {
             return;
         }
         if (isInRoom) {
@@ -226,7 +236,7 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
         >
             <div css={createRoomDivStyle}>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate} />
+                    <CreateLocInput label={"출발지"} startColor={startColor} setStartColor={setStartColor} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate} />
                 </Box>
                 <Box css={inputComponentStyle}>
                     <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate} />
