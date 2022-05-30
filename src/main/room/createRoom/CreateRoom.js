@@ -75,8 +75,9 @@ const textFieldStyle = {
 
 function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLoc, setEndLoc, setOpenCreateButton, setOpenSortButton, clearMessage, rejoin, setRejoin, setRoomList, remake, setRemake, open, setOpen, addRoom, isInRoom, setIsInRoom, isHost, setIsHost, roomId, setRoomId, deleteRoom, addMessage }) {
     const [startColor, setStartColor] = useState('none');
-    const [startActivate, setStartActivate] = useState(false);
-    const [endActivate, setEndActivate] = useState(false);
+    const [endColor, setEndColor] = useState('none');
+    const [startActivate, setStartActivate] = useState(null);
+    const [endActivate, setEndActivate] = useState(null);
     const [startDay, setStartDay] = useState(dayjs().hour() === 23 ? dayjs().add(1, 'day') : dayjs());
     const [startTime, setStartTime] = useState(dayjs().add(1, 'hour'));
 
@@ -92,10 +93,6 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
             time: startTime.format('HH:mm:ss')
         });
     }
-
-    useEffect(() => {
-        setStartColor(checkText(start) ? validColor : 'red');
-    }, [start])
 
     useEffect(() => {
         getSocket().removeAllListeners('createRoomRes');
@@ -178,13 +175,25 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
     }, [rejoin, remake, start, end, startLoc, endLoc, startDay, startTime])
 
     const checkValidInput = () => {
-        const r = true;
+        let r = false;
+        if (startActivate && endActivate && checkDate(startDay) && checkTime(startDay, startTime)) {
+            r =  true;
+        }
         if (!checkText(start)) {
             r = false;
-            setStartColor = 'red';
+            setStartColor('red');
         }
-        if (checkText(start) && startLoc !== null && startActivate && endActivate && checkText(end) && endLoc !== null && checkDate(startDay) && checkTime(startDay, startTime)) {
-            return true;
+        if (!checkText(end)) {
+            r = false;
+            setEndColor('red');
+        }
+        if (startLoc.longitude === 0 && startLoc.latitude === 0) {
+            r = false;
+            setStartActivate(false);
+        }
+        if (endLoc.longitude === 0 && endLoc.latitude === 0) {
+            r = false;
+            setEndActivate(false);
         }
         return r;
     }
@@ -239,7 +248,7 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
                     <CreateLocInput label={"출발지"} color={startColor} setColor={setStartColor} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate} />
                 </Box>
                 <Box css={inputComponentStyle}>
-                    <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate} />
+                    <CreateLocInput label={"목적지"} color={endColor} setColor={setEndColor} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate} />
                 </Box>
                 <br />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>

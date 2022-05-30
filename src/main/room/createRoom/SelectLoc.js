@@ -8,6 +8,15 @@ import { IconButton } from '@mui/material';
 
 const validColor = "#2BAE66";
 
+const getActivateStyle = (acti) => {
+    let colorr = 'none';
+    if (acti === true)
+        colorr = validColor;
+    else if (acti === false)
+        colorr = 'red'
+    return { "svg.MuiSvgIcon-root": { color: colorr } };
+}
+
 function SelectLoc({ loc, setLoc, text, activate, setActivate }) {
     const [open, setOpen] = useState(false);
     const mapRef = useRef(null);
@@ -58,7 +67,7 @@ function SelectLoc({ loc, setLoc, text, activate, setActivate }) {
     }
     return (
         <>
-            <IconButton sx={{ "svg.MuiSvgIcon-root": { color: activate ? validColor : 'red' } }} size="large" onClick={iconClickHandler}>
+            <IconButton sx={getActivateStyle(activate)} size="large" onClick={iconClickHandler}>
                 <FmdGoodOutlinedIcon fontSize="inherit" />
             </IconButton>
             <Modal

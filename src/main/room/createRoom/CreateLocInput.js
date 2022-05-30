@@ -5,24 +5,6 @@ import { checkText } from './ValidCheck';
 
 const validColor = "#2BAE66";
 
-const getValidStyle = (s) => {
-    let colorr = 'none';
-
-    if (checkText(s))
-        colorr = validColor
-    else
-        colorr = 'red'
-
-    return {
-        ".MuiInputLabel-root": {
-            color: colorr
-        },
-        ".MuiOutlinedInput-root fieldset": {
-            borderColor: colorr
-        }
-    };
-}
-
 const getColorStyle = (c) => {
     return {
         ".MuiInputLabel-root": {
@@ -35,13 +17,11 @@ const getColorStyle = (c) => {
 }
 
 function CreateLocInput({ label, color, setColor, textStyle, text, setText, loc, setLoc, activate, setActivate }) {
-    const [textValidStyle, setTextValidStyle] = useState(() => {
-        return getValidStyle(text);
-    });
 
     const changeHandler = (e) => {
         const value = e.target.value.trim();
         setText(value);
+        setColor(checkText(value) ? validColor : 'red');
     }
 
     return (
