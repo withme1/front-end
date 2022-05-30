@@ -227,6 +227,7 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
             <div css={createRoomDivStyle}>
                 <Box css={inputComponentStyle}>
                     <CreateLocInput label={"출발지"} textStyle={textFieldStyle} text={start} setText={setStart} loc={startLoc} setLoc={setStartLoc} activate={startActivate} setActivate={setStartActivate} />
+                    {'가나다 라마다'}
                 </Box>
                 <Box css={inputComponentStyle}>
                     <CreateLocInput label={"목적지"} textStyle={textFieldStyle} text={end} setText={setEnd} loc={endLoc} setLoc={setEndLoc} activate={endActivate} setActivate={setEndActivate} />
