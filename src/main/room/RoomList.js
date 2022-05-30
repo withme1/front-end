@@ -226,13 +226,13 @@ function RoomList({ clearMessage, fullIds, setFullIds, rejoin, setRejoin, remake
 
         height: calc(var(--vh, 1vh) * 100 - 90px${isPC ? '' : ' - 12px'});
 
-        font-size: 4em;
+        font-size: ${isPC ? '4' : '2'}em;
     `;
 
     return (
         <>
             {roomList.length === 0
-                ? <div css={noRoomStyle}><img src={birdImg} alt='noRoom' css={css`position:relative;bottom:30px;width:128px;height:auto`} /><pre> . . .</pre></div>
+                ? <div css={noRoomStyle}><img src={birdImg} alt='noRoom' css={css`position:relative;bottom:30px;width:${isPC ? '128' : '64'}px;height:auto`} /><pre> . . .</pre></div>
                 : <List
                     css={roomListStyle}
                 >
