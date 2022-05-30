@@ -176,7 +176,7 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
 
     const checkValidInput = () => {
         let r = false;
-        if (startActivate && endActivate && checkDate(startDay) && checkTime(startDay, startTime)) {
+        if (checkDate(startDay) && checkTime(startDay, startTime)) {
             r =  true;
         }
         if (!checkText(start)) {
@@ -187,11 +187,11 @@ function CreateRoom({ start, setStart, end, setEnd, startLoc, setStartLoc, endLo
             r = false;
             setEndColor('red');
         }
-        if (startLoc.longitude === 0 && startLoc.latitude === 0) {
+        if (!startActivate) {
             r = false;
             setStartActivate(false);
         }
-        if (endLoc.longitude === 0 && endLoc.latitude === 0) {
+        if (!endActivate) {
             r = false;
             setEndActivate(false);
         }
